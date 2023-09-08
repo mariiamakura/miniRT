@@ -44,6 +44,7 @@ typedef struct s_light
 
 enum e_figure
 {
+	UNKNOWN,
 	PLANE,
 	SPHERE,
 	CYLINDER

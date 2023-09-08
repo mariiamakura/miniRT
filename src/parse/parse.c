@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 12:50:17 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/08 17:53:27 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/08 18:50:16 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,12 @@ int	ft_fill_structs(int fd, t_rt **rt, int index)
 			if (!ft_light_parse(line, rt))
 				error_flag = TRUE;
 		}
-		else if (ft_strncmp(line, "pl ", 2) == 0)
+		else if (ft_strncmp(line, "pl ", 2) == 0 || ft_strncmp(line, "sp ", 2) == 0
+                || ft_strncmp(line, "cy ", 2) == 0)
 		{
 			if (!ft_parse_objects(line, rt, index))
 				error_flag = TRUE;
 		}
-/* 		else if (ft_strncmp(line, "sp ", 2) == 0)
-		else if (ft_strncmp(line, "pl ", 2) == 0)
-		else if (ft_strncmp(line, "cy ", 2) == 0)  */
 		free (line);
 		line = get_next_line(fd);
 	}

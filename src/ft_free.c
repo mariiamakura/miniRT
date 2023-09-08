@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 15:53:23 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/08 18:09:45 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/08 18:51:58 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,12 @@ void ft_print_all(t_rt *rt)
 	printf("color r %i\n", rt->scene->objs->fig.pl.color.r);
 	printf("color g %i\n", rt->scene->objs->fig.pl.color.g);
 	printf("color b %i\n", rt->scene->objs->fig.pl.color.b);
+/*     printf("-----sp-------\n");
+    printf("coord x %f \n", rt->scene->objs->fig.sp.coord.x);
+    printf("coord y %f \n", rt->scene->objs->fig.sp.coord.y);
+    printf("coord z %f \n", rt->scene->objs->fig.sp.coord.z);
+    printf("radius %f \n", rt->scene->objs->fig.sp.r);
+    printf("color r %i\n", rt->scene->objs->fig.sp.color.r);
+    printf("color g %i\n", rt->scene->objs->fig.sp.color.g);
+    printf("color b %i\n", rt->scene->objs->fig.sp.color.b); */
 }

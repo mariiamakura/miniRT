@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 15:06:14 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/08 18:08:29 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/08 19:09:40 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,32 @@ int ft_plane_parse(char *line, t_plane *pl)
 	ft_free_2d_arr(tab);
 	*pl = plane; 
 	return (TRUE);
-	
+}
+
+int ft_sphere_parse(char *line, t_sphere *sp)
+{
+    t_sphere sphere;
+    char **tab;
+
+    ft_bzero(&sphere, sizeof(t_sphere));
+    tab = ft_split(line, ' ');
+    if (!tab)
+        return (FALSE);
+    if (ft_count_arr_elements(tab) != 4)
+    {
+        ft_free_2d_arr(tab);
+        return (FALSE);
+    }
+    sphere.id = "sp";
+    if (!ft_parse_coord(tab[1], &sphere.coord) || !ft_parse_num_var(tab[2], &sphere.r)
+        || !ft_parse_color(tab[3], &sphere.color))
+    {
+        ft_free_2d_arr(tab);
+        return (FALSE);
+    }
+    ft_free_2d_arr(tab);
+    *sp = sphere;
+    return (TRUE);
 }
 
 int	ft_parse_objects(char *line, t_rt **rt, int index)
@@ -55,12 +80,19 @@ int	ft_parse_objects(char *line, t_rt **rt, int index)
 			return (ft_error("pl: now a valid format"));
 		}
 	}
+/*     if (ft_strncmp(line, "sp ", 2) == 0)
+    {
+        new_obj->type = SPHERE;
+        if (!ft_sphere_parse(line, &(new_obj->fig.sp)))
+        {
+            free(new_obj);
+            return (ft_error("sp: now a valid format"));
+        }
+    } */
 	new_obj->i = index;
 	index = index + 1;
 	new_obj->next = NULL;
+	//(*rt)->scene->objs = malloc(sizeof(t_objects));
 	ft_add_obj(&(*rt)->scene->objs, new_obj);
-	printf("id %s\n", new_obj->fig.pl.id);
-	printf("%s\n", (*rt)->scene->light.id);
-	index++;
 	return (TRUE);
 }

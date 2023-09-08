@@ -38,6 +38,7 @@ int ft_parse_coord(char *line, t_xyz *coord);
 int ft_parse_vectors(char *line, t_xyz *vectors);
 int ft_is_range(float num);
 int ft_parse_fov(char *line, float *fov);
+int ft_parse_num_var(char *line, float *num);
 
 //ft_manage_list.c
 t_objects *last_obj(t_objects *objs);
@@ -45,7 +46,7 @@ void ft_add_obj(t_objects **objs, t_objects *new);
 
 //parse_objects.c
 int	ft_parse_objects(char *line, t_rt **rt, int index);
-
+int ft_sphere_parse(char *line, t_sphere *sp);
 //ft_free.c
 void ft_free_rt(t_rt *rt);
 void ft_print_all(t_rt *rt);

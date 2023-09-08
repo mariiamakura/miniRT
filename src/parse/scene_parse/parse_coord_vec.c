@@ -105,3 +105,15 @@ int ft_is_range(float num)
 		return (TRUE);
 	return (FALSE);
 }
+
+int ft_parse_num_var(char *line, float *num)
+{
+    float res;
+
+    res = 0.0;
+    if (!ft_is_float(line))
+        return (FALSE);
+    res = ft_str_to_float(line);
+    *num = res;
+    return (TRUE);
+}
