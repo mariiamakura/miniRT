@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 15:06:14 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/25 11:55:44 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/25 12:15:49 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ int	ft_parse_objects(char *line, t_rt **rt, int index)
         if (!ft_parse_cylinder(line, &(new_obj->fig.cy)))
         {
             free(new_obj);
-            return (ft_error("sp: now a valid format"));
+            return (ft_error("cy: now a valid format"));
         }
     }
 	new_obj->i = index;
