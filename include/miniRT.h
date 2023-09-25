@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 15:49:37 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/05 12:56:15 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/25 14:15:59 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 #include <unistd.h>
 #include "../lib/MLX42/include/MLX42/MLX42.h"
 #include "../lib/libft/libft.h"

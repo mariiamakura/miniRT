@@ -55,4 +55,9 @@ void ft_free_rt(t_rt *rt);
 void ft_print_all(t_rt *rt);
 //static void ft_free_objects(t_objects *objs);
 
+//image_render
+//imag_init.c
+int ft_imag_init(t_rt **rt);
+void ft_key_callback(mlx_key_data_t key_data, void *rt);
+
 #endif
