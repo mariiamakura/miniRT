@@ -60,4 +60,7 @@ void ft_print_all(t_rt *rt);
 int ft_imag_init(t_rt **rt);
 void ft_key_callback(mlx_key_data_t key_data, void *rt);
 
+//color_scratch
+void ft_gradient(t_rt **rt);
+
 #endif
