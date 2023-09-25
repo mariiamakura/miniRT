@@ -40,9 +40,9 @@ int ft_parse_fov(char *line, float *fov)
 int ft_parse_coord(char *line, t_xyz *coord)
 {
 	char **tab;
-	int i;
+	//int i;
 
-	i = 0;
+	//i = 0;
 	tab = ft_split(line, ',');
 	if (!tab)
 		return (FALSE);

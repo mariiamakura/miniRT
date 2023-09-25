@@ -14,11 +14,11 @@
 
 int	ft_ambient_light_parse(char *line, t_rt **rt)
 {
-	int i;
+	//int i;
 	char **tab;
 	t_ambient amb;
 
-	i = 1;
+	//i = 1;
 	if ((*rt)->scene->ambient.id)
 		return (ft_error("More then 1 ambient light"));
 	tab = ft_split(line, ' ');
@@ -45,9 +45,9 @@ int ft_camera_parse(char *line, t_rt **rt)
 {
 	t_camera camera;
 	char **tab;
-	int i;
+	//int i;
 
-	i = 0;
+	//i = 0;
 	if ((*rt)->scene->camera.id)
 		return (ft_error("More then 1 camera"));
 	tab = ft_split(line, ' ');
@@ -76,9 +76,9 @@ int ft_light_parse(char *line, t_rt **rt)
 {
 	t_light light;
 	char **tab;
-	int i;
+	//int i;
 
-	i = 0;
+	//i = 0;
 	if ((*rt)->scene->light.id)
 		return (ft_error("More then 1 light"));
 	tab = ft_split(line, ' ');

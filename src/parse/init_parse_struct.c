@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/06 10:51:05 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/06 16:51:07 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/25 11:08:21 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int ft_init_parse_rt(t_rt **rt)
 	(*rt)->scene->ambient.id = NULL;
 	(*rt)->scene->camera.id = NULL;
 	(*rt)->scene->light.id = NULL;
+	(*rt)->scene->objs = NULL;
 	return (TRUE);
 }
 
