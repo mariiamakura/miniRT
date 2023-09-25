@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 15:53:23 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/25 11:48:01 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/25 13:35:17 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void ft_free_rt(t_rt *rt)
 
 void ft_print_all(t_rt *rt)
 {
-/* 	printf("-----ambient-------\n");
+	printf("-----ambient-------\n");
 	printf("id: %s\n", rt->scene->ambient.id);
 	printf("ratio: %f\n", rt->scene->ambient.ratio);
 	printf("color r %i\n", rt->scene->ambient.color.r);
@@ -59,7 +59,7 @@ void ft_print_all(t_rt *rt)
 	printf("coord x %f \n", rt->scene->light.coord.x);
 	printf("coord y %f \n", rt->scene->light.coord.y);
 	printf("coord z %f \n", rt->scene->light.coord.z);
-	printf("ratio %f \n", rt->scene->light.ratio); */
+	printf("ratio %f \n", rt->scene->light.ratio);
 	t_objects *cur = rt->scene->objs;
 	while (cur)
 	{

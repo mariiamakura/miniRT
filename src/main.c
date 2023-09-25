@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 15:53:53 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/08 13:22:15 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/25 13:38:39 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int	main(int ac, char **av)
 		ft_free_rt(rt);
 		return (-1);
 	}
+	//image
 	ft_print_all(rt);
 	ft_free_rt(rt);
 	return (0);
