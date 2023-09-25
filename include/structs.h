@@ -102,11 +102,18 @@ typedef struct s_scene
 	t_objects	*objs;
 } t_scene;
 
+typedef struct s_window 
+{
+	mlx_t *mlx;
+	mlx_image_t *img;
+} t_window;
+
 
 //our main struct
 typedef struct s_rt 
 {
 	t_scene *scene;
+	t_window *window; //not initialized after parsing
 } t_rt;
 
 #endif
