@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 15:53:23 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/25 11:27:18 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/25 11:48:01 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ void ft_print_all(t_rt *rt)
 		if (cur->type == PLANE)
 		{
 			printf("-----pl-------\n");
+			printf("index %i \n", cur->i);
 			printf("coord x %f \n", cur->fig.pl.coord.x);
 			printf("coord y %f \n", cur->fig.pl.coord.y);
 			printf("coord z %f \n", cur->fig.pl.coord.z);
@@ -76,14 +77,35 @@ void ft_print_all(t_rt *rt)
 			printf("color g %i\n", cur->fig.pl.color.g);
 			printf("color b %i\n", cur->fig.pl.color.b);
 		}
+		else if (cur->type == SPHERE)
+		{
+			printf("-----sp-------\n");
+			printf("index %i \n", cur->i);
+			printf("coord x %f \n",  cur->fig.sp.coord.x);
+			printf("coord y %f \n",  cur->fig.sp.coord.y);
+			printf("coord z %f \n",  cur->fig.sp.coord.z);
+			printf("radius %f \n",  cur->fig.sp.r);
+			printf("color r %i\n",  cur->fig.sp.color.r);
+			printf("color g %i\n",  cur->fig.sp.color.g);
+			printf("color b %i\n",  cur->fig.sp.color.b);
+		}
+		else if (cur->type == CYLINDER)
+		{
+			printf("-----cy-------\n");
+			printf("index %i \n", cur->i);
+			printf("coord x %f \n",  cur->fig.cy.coord.x);
+			printf("coord y %f \n",  cur->fig.cy.coord.y);
+			printf("coord z %f \n",  cur->fig.cy.coord.z);
+			printf("vec x %f \n", cur->fig.cy.vector.x);
+			printf("vec y %f \n", cur->fig.cy.vector.y);
+			printf("vec z %f \n", cur->fig.cy.vector.z);
+			printf("diameter %f \n",  cur->fig.cy.diameter);
+			printf("height %f \n",  cur->fig.cy.height);
+			printf("color r %i\n",  cur->fig.cy.color.r);
+			printf("color g %i\n",  cur->fig.cy.color.g);
+			printf("color b %i\n",  cur->fig.cy.color.b);
+		}
 		cur = cur->next;
 	}
-    // printf("-----sp-------\n");
-    // printf("coord x %f \n", rt->scene->objs->fig.sp.coord.x);
-    // printf("coord y %f \n", rt->scene->objs->fig.sp.coord.y);
-    // printf("coord z %f \n", rt->scene->objs->fig.sp.coord.z);
-    // printf("radius %f \n", rt->scene->objs->fig.sp.r);
-    // printf("color r %i\n", rt->scene->objs->fig.sp.color.r);
-    // printf("color g %i\n", rt->scene->objs->fig.sp.color.g);
-    // printf("color b %i\n", rt->scene->objs->fig.sp.color.b);
+
 }

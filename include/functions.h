@@ -47,8 +47,12 @@ void ft_add_obj(t_objects **objs, t_objects *new);
 //parse_objects.c
 int	ft_parse_objects(char *line, t_rt **rt, int index);
 int ft_sphere_parse(char *line, t_sphere *sp);
+int ft_parse_cylinder(char *line, t_cylinder *cy);
+int ft_plane_parse(char *line, t_plane *pl);
+
 //ft_free.c
 void ft_free_rt(t_rt *rt);
 void ft_print_all(t_rt *rt);
+//static void ft_free_objects(t_objects *objs);
 
 #endif

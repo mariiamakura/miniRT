@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 12:50:17 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/25 11:10:15 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/25 11:54:11 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ int ft_parse(char *file, t_rt **rt)
 		close (fd);
 		return (FALSE);
 	}
-	//printf("%s\n", (*rt)->scene->ambient.id);
 	close(fd);
 	return (TRUE);
 }
@@ -62,12 +61,12 @@ int	ft_fill_structs(int fd, t_rt **rt, int index)
 		{
 			if (!ft_parse_objects(line, rt, index))
 				error_flag = TRUE;
+			index++;
 		}
 		free (line);
 		line = get_next_line(fd);
 	}
 	free (line);
-	index++;
 	if (error_flag == TRUE)
 		return (FALSE);
 	return (TRUE);

@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 15:06:14 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/25 11:15:58 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/25 11:55:44 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,33 @@ int ft_sphere_parse(char *line, t_sphere *sp)
     return (TRUE);
 }
 
+int ft_parse_cylinder(char *line, t_cylinder *cy)
+{
+	t_cylinder cylinder;
+	char **tab;
+
+	ft_bzero(&cylinder, sizeof(t_cylinder));
+	tab = ft_split(line, ' ');
+	 if (!tab)
+        return (FALSE);
+	if (ft_count_arr_elements(tab) != 6)
+    {
+        ft_free_2d_arr(tab);
+        return (FALSE);
+    }
+	cylinder.id = "cy";
+	if (!ft_parse_coord(tab[1], &cylinder.coord) || !ft_parse_vectors(tab[2], &cylinder.vector) 
+		|| !ft_parse_num_var(tab[3], &cylinder.diameter) || !ft_parse_num_var(tab[4], &cylinder.height) 
+        || !ft_parse_color(tab[5], &cylinder.color))
+    {
+        ft_free_2d_arr(tab);
+        return (FALSE);
+    }
+	ft_free_2d_arr(tab);
+    *cy = cylinder;
+    return (TRUE);
+}
+
 int	ft_parse_objects(char *line, t_rt **rt, int index)
 {
 	t_objects *new_obj;
@@ -80,7 +107,7 @@ int	ft_parse_objects(char *line, t_rt **rt, int index)
 			return (ft_error("pl: now a valid format"));
 		}
 	}
-/*     if (ft_strncmp(line, "sp ", 2) == 0)
+    else if (ft_strncmp(line, "sp ", 2) == 0)
     {
         new_obj->type = SPHERE;
         if (!ft_sphere_parse(line, &(new_obj->fig.sp)))
@@ -88,11 +115,18 @@ int	ft_parse_objects(char *line, t_rt **rt, int index)
             free(new_obj);
             return (ft_error("sp: now a valid format"));
         }
-    } */
+    }
+	else if (ft_strncmp(line, "cy ", 3) == 0)
+    {
+        new_obj->type = CYLINDER;
+        if (!ft_parse_cylinder(line, &(new_obj->fig.cy)))
+        {
+            free(new_obj);
+            return (ft_error("sp: now a valid format"));
+        }
+    }
 	new_obj->i = index;
-	index = index + 1;
 	new_obj->next = NULL;
-	//(*rt)->scene->objs = malloc(sizeof(t_objects));
 	ft_add_obj(&(*rt)->scene->objs, new_obj);
 	return (TRUE);
 }
