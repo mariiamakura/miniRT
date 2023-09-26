@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/26 12:07:53 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/26 13:43:56 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,12 @@ void draw_ball(t_rt *rt)
 {
 	t_objects *cur = rt->scene->objs;
 	t_xyz center;
+	t_color colors;
 	int radius;
 
 	center.x = WIDTH / 2 + cur->fig.sp.coord.x * 10;
 	center.y = HEIGHT / 2 + cur->fig.sp.coord.y * 10;
-	float depth_scale = 1.0 + cur->fig.sp.coord.z / 100;
+	float depth_scale = (rt->scene->camera.fov / 90) + cur->fig.sp.coord.z / 100; //53C is 1.0 
 	radius = cur->fig.sp.r * 10 * depth_scale;
 
 	for (int i = 0; i < WIDTH; i++)
@@ -34,9 +35,17 @@ void draw_ball(t_rt *rt)
 		{
 			float distance = sqrt((i - center.x) * (i - center.x) + (j - center.y) * (j - center.y));
 			float adjusted_distance = distance / depth_scale;
+			float normalized_distance = 1.0 - (adjusted_distance / radius);
+			colors.r = normalized_distance * cur->fig.sp.color.r;
+			colors.g = normalized_distance * cur->fig.sp.color.g;
+			colors.b = normalized_distance * cur->fig.sp.color.b;
+
+			colors.r = fminf(fmaxf(colors.r, 0), 255);
+			colors.g = fminf(fmaxf(colors.g, 0), 255);
+			colors.b = fminf(fmaxf(colors.b, 0), 255);
 			if (adjusted_distance <= radius)
 			{
-				mlx_put_pixel(rt->window->img, i, j, ft_pixel(cur->fig.sp.color.r, cur->fig.sp.color.g, cur->fig.sp.color.b, 255));
+				mlx_put_pixel(rt->window->img, i, j, ft_pixel(colors.r, colors.g, colors.b, 255));
 			}
 		}
 	}
@@ -79,6 +88,7 @@ int ft_imag_init(t_rt **rt)
 		return(ft_error("img error"));
 	}
 	mlx_loop_hook((*rt)->window->mlx, ft_hook, (*rt));
+	//ft_camera_orient(rt);
 	draw_ball(*rt);
 	//mlx_key_hook((*rt)->window->mlx, ft_key_callback, (*rt));
 	mlx_loop((*rt)->window->mlx);

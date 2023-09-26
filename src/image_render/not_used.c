@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 16:09:36 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/26 12:07:42 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/26 12:21:58 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void ft_key_callback(mlx_key_data_t key_data, void *rt)
 		mlx_close_window(new_rt->window->mlx);
 }
 
-void ft_randomize(void* param)
+/* void ft_randomize(void* param)
 {
 	t_rt *rt;
 
@@ -42,4 +42,4 @@ void ft_randomize(void* param)
 			mlx_put_pixel(rt->window->img, i, y, color);
 		}
 	}
-}
+} */
