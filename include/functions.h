@@ -62,7 +62,7 @@ void ft_key_callback(mlx_key_data_t key_data, void *rt);
 int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
 void draw_ball(t_rt **rt);;
 void ft_init_canva(t_rt **rt);
-t_color ft_set_colors(int norm_dist, t_color orig_colors);
+void ft_set_colors(t_color *result_color, float normalized_distance, t_color base_color);
 
 //camera.c
 void	ft_camera_orient(t_rt **rt);
