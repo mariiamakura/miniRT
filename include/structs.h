@@ -92,6 +92,17 @@ typedef struct s_objects
 	struct s_objects *next;
 } t_objects;
 
+
+typedef struct s_canva
+{
+	int x;
+	int y;
+	int scale;
+	int amb_intensity;
+	float depth_scale; 
+} t_canva;
+
+
 //struct for a scene (image that we render)
 //it should have an ambient and normal light, 1 camera and some objects
 typedef struct s_scene 
@@ -100,6 +111,7 @@ typedef struct s_scene
 	t_camera	camera;
 	t_light		light;
 	t_objects	*objs;
+	t_canva		canva;
 } t_scene;
 
 typedef struct s_window 
