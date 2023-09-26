@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/25 17:13:26 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/26 12:07:53 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,27 @@ int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 	return (r << 24 | g << 16 | b << 8 | a);
 }
 
-void ft_randomize(void* param)
+void draw_ball(t_rt *rt)
 {
-	t_rt *rt;
+	t_objects *cur = rt->scene->objs;
+	t_xyz center;
+	int radius;
 
-	rt = (t_rt*)param;
-	for (uint32_t i = 0; i < rt->window->img->width; ++i)
+	center.x = WIDTH / 2 + cur->fig.sp.coord.x * 10;
+	center.y = HEIGHT / 2 + cur->fig.sp.coord.y * 10;
+	float depth_scale = 1.0 + cur->fig.sp.coord.z / 100;
+	radius = cur->fig.sp.r * 10 * depth_scale;
+
+	for (int i = 0; i < WIDTH; i++)
 	{
-		for (uint32_t y = 0; y < rt->window->img->height; ++y)
+		for (int j = 0; j < HEIGHT; j++)
 		{
-			uint32_t color = ft_pixel(
-					rand() % 0xFF, // R
-					rand() % 0xFF, // G
-					rand() % 0xFF, // B
-					rand() % 0xFF  // A
-			);
-			mlx_put_pixel(rt->window->img, i, y, 0x00FF00);
+			float distance = sqrt((i - center.x) * (i - center.x) + (j - center.y) * (j - center.y));
+			float adjusted_distance = distance / depth_scale;
+			if (adjusted_distance <= radius)
+			{
+				mlx_put_pixel(rt->window->img, i, j, ft_pixel(cur->fig.sp.color.r, cur->fig.sp.color.g, cur->fig.sp.color.b, 255));
+			}
 		}
 	}
 }
@@ -73,9 +78,9 @@ int ft_imag_init(t_rt **rt)
 		mlx_close_window((*rt)->window->mlx);
 		return(ft_error("img error"));
 	}
-	mlx_loop_hook((*rt)->window->mlx, ft_randomize, (*rt));
 	mlx_loop_hook((*rt)->window->mlx, ft_hook, (*rt));
-	//ft_gradient(rt);
+	draw_ball(*rt);
+	//mlx_key_hook((*rt)->window->mlx, ft_key_callback, (*rt));
 	mlx_loop((*rt)->window->mlx);
 	return (TRUE);
 }
