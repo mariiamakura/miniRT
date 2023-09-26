@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/26 15:22:10 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/26 16:22:51 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ t_color ft_set_colors(int norm_dist, t_color orig_colors)
 	return (colors);
 }
 
+
 void draw_ball(t_rt **rt) //here we need only scene, then maybe we pass only scene?
 {
 	t_objects *cur = (*rt)->scene->objs;
@@ -72,7 +73,7 @@ void draw_ball(t_rt **rt) //here we need only scene, then maybe we pass only sce
 			float distance = sqrt((i - (*rt)->scene->canva.x) * (i - (*rt)->scene->canva.x) + (j - (*rt)->scene->canva.y) * (j - (*rt)->scene->canva.y));
 			float adjusted_distance = distance / (*rt)->scene->canva.depth_scale;
 			float normalized_distance = 1.0 - (adjusted_distance / cur->fig.sp.r);
-			//colors = ft_set_colors(normalized_distance, cur->fig.sp.color); //doesnt work why?
+			//colors = ft_set_colors(normalized_distance, &cur->fig.sp.color); //doesnt work why?
 			colors.r = normalized_distance * cur->fig.sp.color.r;
 			colors.g = normalized_distance * cur->fig.sp.color.g;
 			colors.b = normalized_distance * cur->fig.sp.color.b;
@@ -80,7 +81,10 @@ void draw_ball(t_rt **rt) //here we need only scene, then maybe we pass only sce
 			colors.r = fminf(fmaxf(colors.r, 0), 255);
 			colors.g = fminf(fmaxf(colors.g, 0), 255);
 			colors.b = fminf(fmaxf(colors.b, 0), 255);
-
+			
+			printf("while red %i\n", colors.r);
+			printf("while green %i\n", colors.g);
+			
 			if (adjusted_distance <= cur->fig.sp.r)
 			{
 				mlx_put_pixel((*rt)->window->img, i, j, ft_pixel(colors.r, colors.g, colors.b, (*rt)->scene->canva.amb_intensity)); //the 4 value behaves like amb light
