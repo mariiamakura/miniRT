@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/26 13:43:56 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/26 14:06:41 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,13 @@ void draw_ball(t_rt *rt)
 	t_xyz center;
 	t_color colors;
 	int radius;
+	int scale = 10;
 
-	center.x = WIDTH / 2 + cur->fig.sp.coord.x * 10;
-	center.y = HEIGHT / 2 + cur->fig.sp.coord.y * 10;
+	center.x = WIDTH / 2 + cur->fig.sp.coord.x * scale;
+	center.y = HEIGHT / 2 + cur->fig.sp.coord.y * scale * -1;
+	int amb_intc =rt->scene->ambient.ratio * 255;
 	float depth_scale = (rt->scene->camera.fov / 90) + cur->fig.sp.coord.z / 100; //53C is 1.0 
-	radius = cur->fig.sp.r * 10 * depth_scale;
+	radius = cur->fig.sp.r * scale * depth_scale;
 
 	for (int i = 0; i < WIDTH; i++)
 	{
@@ -43,9 +45,10 @@ void draw_ball(t_rt *rt)
 			colors.r = fminf(fmaxf(colors.r, 0), 255);
 			colors.g = fminf(fmaxf(colors.g, 0), 255);
 			colors.b = fminf(fmaxf(colors.b, 0), 255);
+
 			if (adjusted_distance <= radius)
 			{
-				mlx_put_pixel(rt->window->img, i, j, ft_pixel(colors.r, colors.g, colors.b, 255));
+				mlx_put_pixel(rt->window->img, i, j, ft_pixel(colors.r, colors.g, colors.b, amb_intc)); //the 4 value behaves like amb light
 			}
 		}
 	}
