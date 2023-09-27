@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/26 17:02:54 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/27 14:15:18 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,37 +43,91 @@ void ft_set_colors(t_color *result_color, float normalized_distance, t_color bas
 	result_color->b = fminf(fmaxf(result_color->b, 0), 255);
 }
 
-void draw_ball(t_rt **rt) //here we need only scene, then maybe we pass only scene?
+float ft_dot(t_xyz vec1, t_xyz vec2)
 {
-	t_objects *cur = (*rt)->scene->objs;
-	t_color colors;
-	
-	ft_init_canva(rt);
-	cur->fig.sp.r = cur->fig.sp.r * (*rt)->scene->canva.scale * (*rt)->scene->canva.depth_scale;
 
-	for (int i = 0; i < WIDTH; i++)
-	{
-		for (int j = 0; j < HEIGHT; j++)
-		{
-			float distance = sqrt((i - (*rt)->scene->canva.x) * (i - (*rt)->scene->canva.x) + (j - (*rt)->scene->canva.y) * (j - (*rt)->scene->canva.y));
-			float adjusted_distance = distance / (*rt)->scene->canva.depth_scale;
-			float normalized_distance = 1.0 - (adjusted_distance / cur->fig.sp.r);
-			ft_set_colors(&colors ,normalized_distance, cur->fig.sp.color); //doesnt work why?
-			// colors.r = normalized_distance * cur->fig.sp.color.r;
-			// colors.g = normalized_distance * cur->fig.sp.color.g;
-			// colors.b = normalized_distance * cur->fig.sp.color.b;
-
-			// colors.r = fminf(fmaxf(colors.r, 0), 255);
-			// colors.g = fminf(fmaxf(colors.g, 0), 255);
-			// colors.b = fminf(fmaxf(colors.b, 0), 255);
-
-			if (adjusted_distance <= cur->fig.sp.r)
-			{
-				mlx_put_pixel((*rt)->window->img, i, j, ft_pixel(colors.r, colors.g, colors.b, (*rt)->scene->canva.amb_intensity)); //the 4 value behaves like amb light
-			}
-		}
-	}
+	return (vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z);
+	 
 }
+
+void draw_ball(t_rt **rt) {
+    t_objects *cur = (*rt)->scene->objs;
+    t_color colors;
+    
+    ft_init_canva(rt);
+    cur->fig.sp.r = cur->fig.sp.r * (*rt)->scene->canva.scale * (*rt)->scene->canva.depth_scale;
+    
+    // Light source coordinates
+    float light_x = (*rt)->scene->light.coord.x;
+    float light_y = (*rt)->scene->light.coord.y;
+    float light_z = (*rt)->scene->light.coord.z;
+    
+    for (int i = 0; i < WIDTH; i++) {
+        for (int j = 0; j < HEIGHT; j++) {
+            float distance = sqrt((i - (*rt)->scene->canva.x) * (i - (*rt)->scene->canva.x) + (j - (*rt)->scene->canva.y) * (j - (*rt)->scene->canva.y));
+            float adjusted_distance = distance / (*rt)->scene->canva.depth_scale;
+            
+            if (adjusted_distance <= cur->fig.sp.r) {
+                // Calculate the direction vector from pixel to light source
+                float dir_x = light_x - (i - (*rt)->scene->canva.x);
+                float dir_y = light_y - (j - (*rt)->scene->canva.y);
+                float dir_z = light_z - cur->fig.sp.coord.z;
+                
+                // Normalize the direction vector
+                float dir_length = sqrt(dir_x * dir_x + dir_y * dir_y + dir_z * dir_z);
+                dir_x /= dir_length;
+                dir_y /= dir_length;
+                dir_z /= dir_length;
+
+				//printf("dir_x: %f, dir_y: %f, dir_z: %f\n", dir_x, dir_y, dir_z);
+                
+                // Calculate the normal vector for the point on the sphere's surface
+                float R = cur->fig.sp.r; // Sphere radius
+                float normal_x = (i - (*rt)->scene->canva.x) / R;
+                float normal_y = (j - (*rt)->scene->canva.y) / R;
+                float normal_z = cur->fig.sp.coord.z / R;
+				
+                // Normalize the normal vector
+                float normal_length = sqrt(normal_x * normal_x + normal_y * normal_y + normal_z * normal_z);
+                normal_x /= normal_length;
+                normal_y /= normal_length;
+                normal_z /= normal_length;
+
+				//printf("normal_x: %f, normal_y: %f, normal_z: %f\n", normal_x, normal_y, normal_z);
+                
+                // Calculate the dot product between surface normal and light direction
+                float dot_product = dir_x * normal_x + dir_y * normal_y + dir_z * normal_z;
+                //dot_product = fmaxf(dot_product, 64); if uncomment then the shere is white
+                
+
+				printf("dot_product: %f\n", dot_product);
+
+                // Phong shading components
+                float ambient = (*rt)->scene->canva.amb_intensity;
+                float diffuse = dot_product;
+                float specular = powf(dot_product, 0); // Shininess factor (adjust as needed)
+                
+                // Calculate the final color
+                colors.r = cur->fig.sp.color.r * diffuse + ambient;
+                colors.g = cur->fig.sp.color.g * diffuse + ambient;
+                colors.b = cur->fig.sp.color.b * diffuse + ambient;
+                
+                // Apply specular highlight (optional)
+                colors.r += specular;
+                colors.g += specular;
+                colors.b += specular;
+                
+                // Clamp color values
+                colors.r = fminf(fmaxf(colors.r, 0), 255);
+                colors.g = fminf(fmaxf(colors.g, 0), 255);
+                colors.b = fminf(fmaxf(colors.b, 0), 255);
+                
+                mlx_put_pixel((*rt)->window->img, i, j, ft_pixel(colors.r, colors.g, colors.b, 255)); // Use 255 for alpha (fully opaque)
+            }
+        }
+    }
+}
+
 
 
 void ft_hook(void* param)
