@@ -120,7 +120,6 @@ typedef struct s_window
 	mlx_image_t *img;
 } t_window;
 
-
 //our main struct
 typedef struct s_rt 
 {

@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/27 14:15:18 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/28 13:22:11 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,89 +43,71 @@ void ft_set_colors(t_color *result_color, float normalized_distance, t_color bas
 	result_color->b = fminf(fmaxf(result_color->b, 0), 255);
 }
 
-float ft_dot(t_xyz vec1, t_xyz vec2)
+float ft_dot(t_xyz *vec1, t_xyz *vec2)
 {
 
-	return (vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z);
+	return (vec1->x * vec2->x + vec1->y * vec2->y + vec1->z * vec2->z);
 	 
 }
 
+//mlx_put_pixel((*rt)->window->img, i, j, ft_pixel(colors.r, colors.g, colors.b, 255)); // Use 255 for alpha (fully opaque)
+
+void ft_normalize(t_xyz *ray)
+{
+	float length;
+	
+	length = sqrt(ft_dot(ray, ray));
+	ray->x /= length;
+	ray->y /= length;
+	ray->z /= length;
+	
+}
+
+void ft_set_light_dir(t_xyz *light_dir, t_rt **rt)
+{
+	t_light light;
+	t_camera camera;
+	
+	light = (*rt)->scene->light;
+	camera = (*rt)->scene->camera;
+	
+	light_dir->x = light.coord.x - camera.coord.x;
+	light_dir->y = light.coord.y - camera.coord.y;
+	light_dir->z = light.coord.z - camera.coord.z;
+}
+
 void draw_ball(t_rt **rt) {
-    t_objects *cur = (*rt)->scene->objs;
-    t_color colors;
-    
-    ft_init_canva(rt);
-    cur->fig.sp.r = cur->fig.sp.r * (*rt)->scene->canva.scale * (*rt)->scene->canva.depth_scale;
-    
-    // Light source coordinates
-    float light_x = (*rt)->scene->light.coord.x;
-    float light_y = (*rt)->scene->light.coord.y;
-    float light_z = (*rt)->scene->light.coord.z;
-    
-    for (int i = 0; i < WIDTH; i++) {
-        for (int j = 0; j < HEIGHT; j++) {
-            float distance = sqrt((i - (*rt)->scene->canva.x) * (i - (*rt)->scene->canva.x) + (j - (*rt)->scene->canva.y) * (j - (*rt)->scene->canva.y));
-            float adjusted_distance = distance / (*rt)->scene->canva.depth_scale;
-            
-            if (adjusted_distance <= cur->fig.sp.r) {
-                // Calculate the direction vector from pixel to light source
-                float dir_x = light_x - (i - (*rt)->scene->canva.x);
-                float dir_y = light_y - (j - (*rt)->scene->canva.y);
-                float dir_z = light_z - cur->fig.sp.coord.z;
-                
-                // Normalize the direction vector
-                float dir_length = sqrt(dir_x * dir_x + dir_y * dir_y + dir_z * dir_z);
-                dir_x /= dir_length;
-                dir_y /= dir_length;
-                dir_z /= dir_length;
 
-				//printf("dir_x: %f, dir_y: %f, dir_z: %f\n", dir_x, dir_y, dir_z);
-                
-                // Calculate the normal vector for the point on the sphere's surface
-                float R = cur->fig.sp.r; // Sphere radius
-                float normal_x = (i - (*rt)->scene->canva.x) / R;
-                float normal_y = (j - (*rt)->scene->canva.y) / R;
-                float normal_z = cur->fig.sp.coord.z / R;
-				
-                // Normalize the normal vector
-                float normal_length = sqrt(normal_x * normal_x + normal_y * normal_y + normal_z * normal_z);
-                normal_x /= normal_length;
-                normal_y /= normal_length;
-                normal_z /= normal_length;
+	t_xyz light_dir;
+	t_xyz intersection;
+	t_xyz normal; 
+	t_color colors;
+	t_sphere sp;
 
-				//printf("normal_x: %f, normal_y: %f, normal_z: %f\n", normal_x, normal_y, normal_z);
-                
-                // Calculate the dot product between surface normal and light direction
-                float dot_product = dir_x * normal_x + dir_y * normal_y + dir_z * normal_z;
-                //dot_product = fmaxf(dot_product, 64); if uncomment then the shere is white
-                
+	sp = (*rt)->scene->objs->fig.sp;
 
-				printf("dot_product: %f\n", dot_product);
+	ft_set_light_dir(&light_dir, rt);
+	ft_normalize(&light_dir);
+	//printf("x %f y %f z %f\n", light_dir.x, light_dir.y, light_dir.z);
+	for (int pix_x = 0; pix_x < WIDTH; pix_x++) {
+		for (int pix_y = 0; pix_y < HEIGHT; pix_y++) {
+			intersection.x = pix_x;
+			intersection.y = pix_y;
+			intersection.z = sp.r;
 
-                // Phong shading components
-                float ambient = (*rt)->scene->canva.amb_intensity;
-                float diffuse = dot_product;
-                float specular = powf(dot_product, 0); // Shininess factor (adjust as needed)
-                
-                // Calculate the final color
-                colors.r = cur->fig.sp.color.r * diffuse + ambient;
-                colors.g = cur->fig.sp.color.g * diffuse + ambient;
-                colors.b = cur->fig.sp.color.b * diffuse + ambient;
-                
-                // Apply specular highlight (optional)
-                colors.r += specular;
-                colors.g += specular;
-                colors.b += specular;
-                
-                // Clamp color values
-                colors.r = fminf(fmaxf(colors.r, 0), 255);
-                colors.g = fminf(fmaxf(colors.g, 0), 255);
-                colors.b = fminf(fmaxf(colors.b, 0), 255);
-                
-                mlx_put_pixel((*rt)->window->img, i, j, ft_pixel(colors.r, colors.g, colors.b, 255)); // Use 255 for alpha (fully opaque)
-            }
-        }
-    }
+			//o understand the angle between incoming light and sphere surface 
+			//we need to calculate the dot product of the normal and light direction vectors
+
+			normal.x = intersection.x - sp.coord.x;
+			normal.y = intersection.y - sp.coord.y;
+			normal.z = intersection.z - sp.coord.z;
+			ft_normalize(&normal);
+
+			float diffuse = fmax(ft_dot(normal, light_dir), 0.0);
+			
+			
+		}
+	}
 }
 
 
