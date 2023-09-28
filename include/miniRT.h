@@ -24,8 +24,11 @@
 #include "structs.h"
 #include "functions.h"
 
-#define Cw 1920
-#define Ch 1080
+#define Cw 800
+#define Ch 800
+#define Vw 1
+#define Vh 1
+#define d 1
 #define FALSE 0
 #define TRUE 1
 

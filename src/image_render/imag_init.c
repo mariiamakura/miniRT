@@ -12,146 +12,132 @@
 
 #include "../../include/miniRT.h"
 
-float ft_dot(t_xyz *vec1, t_xyz *vec2)
-{
+float ft_dot(t_xyz *vec1, t_xyz *vec2) {
 
-	return (vec1->x * vec2->x + vec1->y * vec2->y + vec1->z * vec2->z);
-	 
+    return (vec1->x * vec2->x + vec1->y * vec2->y + vec1->z * vec2->z);
+
 }
 
-void ft_normalize(t_xyz *ray)
-{
-	float length;
-	
-	length = sqrt(ft_dot(ray, ray));
-	ray->x /= length;
-	ray->y /= length;
-	ray->z /= length;
-	
+t_xyz ft_unary_minus(t_xyz *vec) {
+    return (t_xyz) {-vec->x, -vec->y, -vec->z};
 }
 
-void ft_get_viewpoint(int x, int y, t_xyz *viewPoint/*, t_rt **rt*/)
-{
-    //float fov_radians = (*rt)->scene->camera.fov * M_PI / 180;
-    viewPoint->x = x;
-    viewPoint->y = y;
-    //viewPoint->z = Cw / (2 * tan(fov_radians / 2));
-    viewPoint->z = 1;
+t_xyz ft_plus(t_xyz *vec1, t_xyz *vec2) {
+    return (t_xyz) {vec1->x + vec2->x, vec1->y + vec2->y, vec1->z + vec2->z};
 }
 
-void ft_intersect(t_xyz *cam_ori, t_xyz *viewPoint, t_sphere *sp, t_hitPoint *hitPoint)
-{
-    t_xyz cam_min_sp;
-    cam_min_sp.x = cam_ori->x - sp->coord.x;
-    cam_min_sp.y = cam_ori->y - sp->coord.y;
-    cam_min_sp.z = cam_ori->z - sp->coord.z;
-//    sp->r = sp->r * 10;
-//
-//    printf("%f\n", sp->r )
+t_xyz ft_minus(t_xyz *vec1, t_xyz *vec2) {
+    return (t_xyz) {vec1->x - vec2->x, vec1->y - vec2->y, vec1->z - vec2->z};
+}
 
-    //printf("shere %f %f %f\n", sp->coord.x, sp->coord.y, sp->coord.z);
-    //printf("cam ori %f %f %f\n", cam_ori->x,  cam_ori->y,  cam_ori->z);
-    float a = ft_dot(viewPoint, viewPoint);
-    float b = 2 * ft_dot(&cam_min_sp, viewPoint);
-    float c = ft_dot(&cam_min_sp, &cam_min_sp) - sp->r * sp->r;
+t_xyz ft_normalize(t_xyz *vec) {
+    float length = sqrt(ft_dot(vec, vec));
+    return (t_xyz) {vec->x / length, vec->y / length, vec->z / length};
+}
 
-    float discr = b * b - 4 * a * c;
-    //printf("%f\n", discr);
-    if (discr < 0)
-    {
-        hitPoint->h1 = FLT_MAX;
-        hitPoint->h2 = FLT_MAX;
-        return ;
+t_xyz CanvasToViewport(int x, int y) {
+    return (t_xyz) {(float) x * Vw / Cw, (float) y * Vh / Ch, d};
+}
+
+int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t2) {
+    t_xyz *C = &sphere->coord;
+    float r = sphere->r;
+    t_xyz OC = ft_minus(O, C);
+
+    float k1 = ft_dot(D, D);
+    float k2 = 2 * ft_dot(&OC, D);
+    float k3 = ft_dot(&OC, &OC) - r * r;
+
+    float discriminant = k2 * k2 - 4 * k1 * k3;
+    if (discriminant < 0) {
+        return FALSE;
     }
 
-    hitPoint->h1 = (-b + sqrt(discr)) / (2 * a);
-    hitPoint->h2 = (-b - sqrt(discr)) / (2 * a);
+    *t1 = (-k2 + sqrt(discriminant)) / (2 * k1);
+    *t2 = (-k2 - sqrt(discriminant)) / (2 * k1);
+    return TRUE;
 }
 
-int ft_rayTrace(t_xyz *cam_ori, t_xyz *viewPoint, t_rt **rt)
-{
-    t_hitPoint hitPont;
-
-    float t_min = 1;
-    float t_max = FLT_MAX;
+t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
+    float t1, t2;
     float closest_t = FLT_MAX;
-    ft_intersect(cam_ori, viewPoint, &(*rt)->scene->objs->fig.sp, &hitPont);
-    //printf("hit point1 %f hit point2 %f\n", hitPont.h1, hitPont.h2);
-    if (hitPont.h1 > t_min && hitPont.h1 < t_max && hitPont.h1 < closest_t)
-        closest_t = hitPont.h1;
-    if (hitPont.h2 > t_min && hitPont.h2 < t_max && hitPont.h2 < closest_t)
-        closest_t = hitPont.h2;
-    if (closest_t == FLT_MAX)
-        return ft_pixel(255, 255, 255, 255);
-    return ft_pixel(255, 0, 255, 255);
+    t_sphere *closest_sphere = NULL;
+
+    t_objects *object = (*rt)->scene->objs;
+    while (object != NULL) {
+        if (object->type == SPHERE) {
+            t_sphere *sphere = &(object->fig.sp);
+            if (IntersectRaySphere(O, D, sphere, &t1, &t2)) {
+                if (t1 > 1 && t1 < closest_t) {
+                    closest_t = t1;
+                    closest_sphere = sphere;
+                }
+                if (t1 > 1 && t2 < closest_t) {
+                    closest_t = t2;
+                    closest_sphere = sphere;
+                }
+            }
+        }
+        object = object->next;
+    }
+    if (closest_sphere == NULL) {
+        return (t_color) {255, 255, 255};
+    } else {
+        return closest_sphere->color;
+    }
+}
+
+void draw_ball(t_rt **rt) {
+    t_xyz O = (*rt)->scene->camera.coord;
+    for (int Sx = 0; Sx < Cw; Sx++) {
+        for (int Sy = 0; Sy < Ch; Sy++) {
+            int Cx = Sx - Cw / 2;
+            int Cy = Ch / 2 - Sy;
+            t_xyz D = CanvasToViewport(Cx, Cy);
+            t_color color = TraceRay(rt, &O, &D);
+            uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
+            mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);
+        }
+    }
 }
 
 
-void draw_ball(t_rt **rt)
-{
-	
-	t_xyz cam_ori;
-	//t_color colors;
-	//int d = 1;
-	int fin_color;
-    t_xyz viewPoint;
+void ft_hook(void *param) {
+    t_rt *rt;
 
-	cam_ori = (*rt)->scene->camera.coord;
-	//colors = (*rt)->scene->objs->fig.sp.color;
-	for (int x = (Cw / 2 * -1); x < Cw / 2; x++) {
-		for (int y = (Ch / 2 * -1); y < Ch / 2; y++) {
-
-            ft_get_viewpoint(x, y, &viewPoint);
-            fin_color = ft_rayTrace(&cam_ori, &viewPoint, rt);
-            //printf("%f %f %f\n", viewPoint.x, viewPoint.y, viewPoint.z);
-
-		//fin_color = ft_pixel(colors.r, colors.g, colors.b, 255);
-		ft_put_pixel(x, y, fin_color, rt);
-		}
-	}
+    rt = (t_rt *) param;
+    if (mlx_is_key_down(rt->window->mlx, MLX_KEY_ESCAPE))
+        mlx_close_window(rt->window->mlx);
+    if (mlx_is_key_down(rt->window->mlx, MLX_KEY_UP))
+        rt->window->img->instances[0].y -= 5;
+    if (mlx_is_key_down(rt->window->mlx, MLX_KEY_DOWN))
+        rt->window->img->instances[0].y += 5;
+    if (mlx_is_key_down(rt->window->mlx, MLX_KEY_LEFT))
+        rt->window->img->instances[0].x -= 5;
+    if (mlx_is_key_down(rt->window->mlx, MLX_KEY_RIGHT))
+        rt->window->img->instances[0].x += 5;
 }
 
-
-void ft_hook(void* param)
-{
-	t_rt *rt;
-
-	rt = (t_rt*)param;
-	if (mlx_is_key_down(rt->window->mlx, MLX_KEY_ESCAPE))
-		mlx_close_window(rt->window->mlx);
-	if (mlx_is_key_down(rt->window->mlx, MLX_KEY_UP))
-		rt->window->img->instances[0].y -= 5;
-	if (mlx_is_key_down(rt->window->mlx, MLX_KEY_DOWN))
-		rt->window->img->instances[0].y += 5;
-	if (mlx_is_key_down(rt->window->mlx, MLX_KEY_LEFT))
-		rt->window->img->instances[0].x -= 5;
-	if (mlx_is_key_down(rt->window->mlx, MLX_KEY_RIGHT))
-		rt->window->img->instances[0].x += 5;
-}
-
-int ft_imag_init(t_rt **rt)
-{
-	(*rt)->window = malloc(sizeof(t_window));
-	if (!(*rt)->window)
-		return(ft_error("mlx error"));
-	(*rt)->window->mlx = mlx_init(Cw, Ch, "miniRT", true);
-	if (!(*rt)->window->mlx)
-		return(ft_error("mlx error"));
-	(*rt)->window->img = mlx_new_image((*rt)->window->mlx, Cw, Ch);
-	if (!(*rt)->window->img)
-	{
-		mlx_close_window((*rt)->window->mlx);
-		return(ft_error("img error"));
-	}
-	if (mlx_image_to_window((*rt)->window->mlx, (*rt)->window->img, 0, 0) == -1)
-	{
-		mlx_close_window((*rt)->window->mlx);
-		return(ft_error("img error"));
-	}
-	mlx_loop_hook((*rt)->window->mlx, ft_hook, (*rt));
-	//ft_camera_orient(rt);
-	draw_ball(rt);
-	//mlx_key_hook((*rt)->window->mlx, ft_key_callback, (*rt));
-	mlx_loop((*rt)->window->mlx);
-	return (TRUE);
+int ft_imag_init(t_rt **rt) {
+    (*rt)->window = malloc(sizeof(t_window));
+    if (!(*rt)->window)
+        return (ft_error("mlx error"));
+    (*rt)->window->mlx = mlx_init(Cw, Ch, "miniRT", true);
+    if (!(*rt)->window->mlx)
+        return (ft_error("mlx error"));
+    (*rt)->window->img = mlx_new_image((*rt)->window->mlx, Cw, Ch);
+    if (!(*rt)->window->img) {
+        mlx_close_window((*rt)->window->mlx);
+        return (ft_error("img error"));
+    }
+    if (mlx_image_to_window((*rt)->window->mlx, (*rt)->window->img, 0, 0) == -1) {
+        mlx_close_window((*rt)->window->mlx);
+        return (ft_error("img error"));
+    }
+    mlx_loop_hook((*rt)->window->mlx, ft_hook, (*rt));
+    //ft_camera_orient(rt);
+    draw_ball(rt);
+    //mlx_key_hook((*rt)->window->mlx, ft_key_callback, (*rt));
+    mlx_loop((*rt)->window->mlx);
+    return (TRUE);
 }
