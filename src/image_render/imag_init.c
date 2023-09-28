@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/28 13:22:11 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/28 14:22:30 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,6 @@ float ft_dot(t_xyz *vec1, t_xyz *vec2)
 	 
 }
 
-//mlx_put_pixel((*rt)->window->img, i, j, ft_pixel(colors.r, colors.g, colors.b, 255)); // Use 255 for alpha (fully opaque)
-
 void ft_normalize(t_xyz *ray)
 {
 	float length;
@@ -80,32 +78,61 @@ void draw_ball(t_rt **rt) {
 
 	t_xyz light_dir;
 	t_xyz intersection;
-	t_xyz normal; 
 	t_color colors;
+	t_xyz cam_vec;
 	t_sphere sp;
+	t_xyz cam_ori;
+	t_xyz sp_norm;
 
 	sp = (*rt)->scene->objs->fig.sp;
+	cam_ori = (*rt)->scene->camera.coord;
 
 	ft_set_light_dir(&light_dir, rt);
 	ft_normalize(&light_dir);
 	//printf("x %f y %f z %f\n", light_dir.x, light_dir.y, light_dir.z);
 	for (int pix_x = 0; pix_x < WIDTH; pix_x++) {
 		for (int pix_y = 0; pix_y < HEIGHT; pix_y++) {
-			intersection.x = pix_x;
-			intersection.y = pix_y;
-			intersection.z = sp.r;
 
-			//o understand the angle between incoming light and sphere surface 
-			//we need to calculate the dot product of the normal and light direction vectors
-
-			normal.x = intersection.x - sp.coord.x;
-			normal.y = intersection.y - sp.coord.y;
-			normal.z = intersection.z - sp.coord.z;
-			ft_normalize(&normal);
-
-			float diffuse = fmax(ft_dot(normal, light_dir), 0.0);
+			cam_vec.x = cam_ori.x - sp.coord.x;
+			cam_vec.y = cam_ori.y - sp.coord.y;
+			cam_vec.z = cam_ori.z - sp.coord.z;
+			ft_normalize(&cam_vec);
 			
+			float a = ft_dot(&light_dir, &light_dir);
+			float b = 2 * ft_dot(&light_dir, &cam_vec);
+			float c = ft_dot(&cam_vec, &cam_vec) - (sp.r * sp.r);
 			
+			float discr = b * b - 4 * a * c;
+			printf("%f\n", discr);
+
+			if (discr >= 0)
+			{
+				float t1 = (-b + sqrt(discr)) / (2 * a);
+				float t2 = (-b - sqrt(discr)) / (2 * a);
+
+				float t = fmin(t1, t2);
+
+				intersection.x = cam_ori.x + t * (float)pix_x;
+				intersection.y = cam_ori.y + t * (float)pix_y;
+				intersection.z = cam_ori.z + t * 1;
+
+				sp_norm.x = intersection.x - sp.coord.x; 
+				sp_norm.y = intersection.y - sp.coord.y; 
+				sp_norm.z = intersection.z - sp.coord.z; 
+				ft_normalize(&sp_norm);
+
+				float diffuse = fmax(ft_dot(&sp_norm, &light_dir), 0.0);
+			
+				colors.r = diffuse * sp.color.r;
+				colors.g = diffuse * sp.color.g;
+				colors.b = diffuse * sp.color.b;
+
+				colors.r = fmin(255.0, fmax(0.0, colors.r));
+				colors.g = fmin(255.0, fmax(0.0, colors.g));
+				colors.b = fmin(255.0, fmax(0.0, colors.b));
+
+				mlx_put_pixel((*rt)->window->img, pix_x, pix_y, ft_pixel(colors.r, colors.g, colors.b, 255)); // Use 255 for alpha (fully opaque)
+			}
 		}
 	}
 }
