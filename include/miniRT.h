@@ -24,8 +24,8 @@
 #include "structs.h"
 #include "functions.h"
 
-#define WIDTH 1000
-#define HEIGHT 800
+#define Cw 1920
+#define Ch 1080
 #define FALSE 0
 #define TRUE 1
 

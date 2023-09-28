@@ -2,12 +2,12 @@
 
 void ft_gradient(t_color *color, t_rt **rt)
 {
-	for (int x = 0; x < WIDTH; x++) {
-		for (int y = 0; y < HEIGHT; y++) {
-			//printf("Scanlines remaining: %i\n", HEIGHT - y);
-			float r = (float)x / (WIDTH - 1);
+	for (int x = 0; x < Cw; x++) {
+		for (int y = 0; y < Ch; y++) {
+			//printf("Scanlines remaining: %i\n", Ch - y);
+			float r = (float)x / (Cw - 1);
 			float g = 0;
-			float b = (float)y / (HEIGHT - 1);
+			float b = (float)y / (Ch - 1);
 
 			int ir = (int)(color->r * r);
 			int ig = (int)(color->g * g);
@@ -24,11 +24,11 @@ void ft_put_pixel(int x, int y, int color, t_rt **rt)
 	int can_x;
 	int can_y;
 
-	can_x = x + WIDTH / 2;
-	can_y = y + HEIGHT / 2;
+	can_x = x + Cw / 2;
+	can_y = y + Ch / 2;
 
 	//printf("------rendering %i row-----------", can_y);
-	if (can_x >= 0 && can_x < WIDTH && can_y >= 0 && can_y < HEIGHT)
+	if (can_x >= 0 && can_x < Cw && can_y >= 0 && can_y < Ch)
 		mlx_put_pixel((*rt)->window->img, can_x, can_y, color); 
 }
 

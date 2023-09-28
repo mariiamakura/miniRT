@@ -35,7 +35,7 @@ void ft_get_viewpoint(int x, int y, t_xyz *viewPoint/*, t_rt **rt*/)
     //float fov_radians = (*rt)->scene->camera.fov * M_PI / 180;
     viewPoint->x = x;
     viewPoint->y = y;
-    //viewPoint->z = WIDTH / (2 * tan(fov_radians / 2));
+    //viewPoint->z = Cw / (2 * tan(fov_radians / 2));
     viewPoint->z = 1;
 }
 
@@ -45,6 +45,9 @@ void ft_intersect(t_xyz *cam_ori, t_xyz *viewPoint, t_sphere *sp, t_hitPoint *hi
     cam_min_sp.x = cam_ori->x - sp->coord.x;
     cam_min_sp.y = cam_ori->y - sp->coord.y;
     cam_min_sp.z = cam_ori->z - sp->coord.z;
+//    sp->r = sp->r * 10;
+//
+//    printf("%f\n", sp->r )
 
     //printf("shere %f %f %f\n", sp->coord.x, sp->coord.y, sp->coord.z);
     //printf("cam ori %f %f %f\n", cam_ori->x,  cam_ori->y,  cam_ori->z);
@@ -61,8 +64,8 @@ void ft_intersect(t_xyz *cam_ori, t_xyz *viewPoint, t_sphere *sp, t_hitPoint *hi
         return ;
     }
 
-    hitPoint->h1 = (-b + sqrt(discr) / (2 * a));
-    hitPoint->h2 = (-b - sqrt(discr) / (2 * a));
+    hitPoint->h1 = (-b + sqrt(discr)) / (2 * a);
+    hitPoint->h2 = (-b - sqrt(discr)) / (2 * a);
 }
 
 int ft_rayTrace(t_xyz *cam_ori, t_xyz *viewPoint, t_rt **rt)
@@ -95,8 +98,8 @@ void draw_ball(t_rt **rt)
 
 	cam_ori = (*rt)->scene->camera.coord;
 	//colors = (*rt)->scene->objs->fig.sp.color;
-	for (int x = (WIDTH / 2 * -1); x < WIDTH / 2; x++) {
-		for (int y = (HEIGHT / 2 * -1); y < HEIGHT / 2; y++) {
+	for (int x = (Cw / 2 * -1); x < Cw / 2; x++) {
+		for (int y = (Ch / 2 * -1); y < Ch / 2; y++) {
 
             ft_get_viewpoint(x, y, &viewPoint);
             fin_color = ft_rayTrace(&cam_ori, &viewPoint, rt);
@@ -131,10 +134,10 @@ int ft_imag_init(t_rt **rt)
 	(*rt)->window = malloc(sizeof(t_window));
 	if (!(*rt)->window)
 		return(ft_error("mlx error"));
-	(*rt)->window->mlx = mlx_init(WIDTH, HEIGHT, "miniRT", true);
+	(*rt)->window->mlx = mlx_init(Cw, Ch, "miniRT", true);
 	if (!(*rt)->window->mlx)
 		return(ft_error("mlx error"));
-	(*rt)->window->img = mlx_new_image((*rt)->window->mlx, WIDTH, HEIGHT);
+	(*rt)->window->img = mlx_new_image((*rt)->window->mlx, Cw, Ch);
 	if (!(*rt)->window->img)
 	{
 		mlx_close_window((*rt)->window->mlx);
