@@ -99,9 +99,14 @@ typedef struct s_canva
 	int y;
 	int scale;
 	int amb_intensity;
-	float depth_scale; 
+	float depth_scale;
 } t_canva;
 
+typedef struct s_hitPoint
+{
+    float h1;
+    float h2;
+} t_hitPoint;
 
 //struct for a scene (image that we render)
 //it should have an ambient and normal light, 1 camera and some objects

@@ -61,6 +61,8 @@ int ft_imag_init(t_rt **rt);
 void ft_key_callback(mlx_key_data_t key_data, void *rt);
 void draw_ball(t_rt **rt);;
 float ft_dot(t_xyz *vec1, t_xyz *vec2);
+void ft_get_viewpoint(int x, int y, t_xyz *viewPoint/*, t_rt **rt*/);
+
 //camera.c
 void	ft_camera_orient(t_rt **rt);
 
