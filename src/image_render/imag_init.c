@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/29 14:17:18 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/29 14:44:19 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
         if (object->type == SPHERE) {
             t_sphere *sphere = &(object->fig.sp);
             if (IntersectRaySphere(O, D, sphere, &t1, &t2)) {
-                if (t1 > 1 && t1 < closest_t) {
+                if (t1 > 1 && t1 < closest_t) { //if t > d I found with fov
                     closest_t = t1;
                     closest_sphere = sphere;
                 }
@@ -119,7 +119,6 @@ void draw_ball(t_rt **rt) {
             int Cy = Ch / 2 - Sy;
             t_xyz D = CanvasToViewport(Cx, Cy, fov);
             t_color color = TraceRay(rt, &O, &D);
-			//int intensity = (*rt)->scene->ambient.ratio * 255;
             uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
             mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);
         }
