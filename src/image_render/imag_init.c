@@ -142,12 +142,13 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 
 void draw_ball(t_rt **rt) {
     t_xyz O = (*rt)->scene->camera.coord;
+    //t_xyz camV = (*rt)->scene->camera.vector;
 	int fov = (*rt)->scene->camera.fov;
     for (int Sx = 0; Sx < Cw; Sx++) {
         for (int Sy = 0; Sy < Ch; Sy++) {
             int Cx = Sx - Cw / 2;
             int Cy = Ch / 2 - Sy;
-            t_xyz D = CanvasToViewport(Cx, Cy, fov);
+            t_xyz D =  CanvasToViewport(Cx, Cy, fov);
             t_color color = TraceRay(rt, &O, &D);
             uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
             mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);

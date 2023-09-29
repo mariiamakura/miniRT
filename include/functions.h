@@ -80,5 +80,6 @@ t_xyz ft_minus(t_xyz *vec1, t_xyz *vec2);
 t_xyz ft_normalize(t_xyz *vec);
 float ft_vec_lenght(t_xyz *vec);
 t_xyz ft_vec_mult_float(t_xyz *vec, float i);
+t_xyz ft_vec_multi(t_xyz *vec1, t_xyz *vec2);
 
 #endif

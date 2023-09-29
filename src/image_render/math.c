@@ -16,6 +16,17 @@ t_xyz ft_unary_minus(t_xyz *vec) {
     return (t_xyz) {-vec->x, -vec->y, -vec->z};
 }
 
+t_xyz ft_vec_multi(t_xyz *vec1, t_xyz *vec2)
+{
+    t_xyz res;
+
+    res.x = vec1->x * vec2->x;
+    res.y = vec1->y * vec2->y;
+    res.z = vec1->z * vec2->z;
+
+    return (res);
+}
+
 t_xyz ft_vec_mult_float(t_xyz *vec, float i)
 {
     t_xyz res;
