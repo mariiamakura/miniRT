@@ -18,6 +18,12 @@ typedef struct s_xyz
 	float z;
 } t_xyz;
 
+typedef struct s_xy
+{
+    float x;
+    float y;
+} t_xy;
+
 //ambiant light
 typedef struct	s_ambient
 {

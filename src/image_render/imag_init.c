@@ -14,27 +14,25 @@
 
 t_xyz CanvasToViewport(int x, int y, int fov) {
 
-	float d = Vw / (2 * tan((float)fov / 2 * M_PI / 180));
+    float d = Vw / (2 * tan((float) fov / 2 * M_PI / 180));
     return (t_xyz) {(float) x * Vw / Cw, (float) y * Vh / Ch, d};
 }
 
-t_xyz ft_get_intersec(t_xyz *O, float closest_t, t_xyz *D)
-{
-	t_xyz P;
+t_xyz ft_get_intersec(t_xyz *O, float closest_t, t_xyz *D) {
+    t_xyz P;
 
-	// Compute intersection
-	P.x = O->x + closest_t * D->x;
-	P.y = O->y + closest_t * D->y;
-	P.z = O->z + closest_t * D->z;
+    // Compute intersection
+    P.x = O->x + closest_t * D->x;
+    P.y = O->y + closest_t * D->y;
+    P.z = O->z + closest_t * D->z;
 
-	return (P);
+    return (P);
 }
 
-float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V)
-{
-	t_ambient amb = (*rt)->scene->ambient;
-	t_light light_point = (*rt)->scene->light;
-	float i = 0.0;
+float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V) {
+    t_ambient amb = (*rt)->scene->ambient;
+    t_light light_point = (*rt)->scene->light;
+    float i = 0.0;
     float s = 150; //spectacular light
 
     if (amb.ratio == 0.0)
@@ -45,23 +43,22 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V)
         i += amb.ratio; //ambient included to the color intencity
     }
 
-	t_xyz L = ft_minus(&light_point.coord, P);
+    t_xyz L = ft_minus(&light_point.coord, P);
 
     t_sphere *shadow_sphere = NULL;
     ClosestIntersection(rt, P, &L, &shadow_sphere, 0.001);
     if (shadow_sphere != NULL)
         return (i);
 
-	float n_dot_l = ft_dot(N, &L);
-	if (n_dot_l > 0)
-	{
-		i += light_point.ratio * n_dot_l / (ft_vec_lenght(N) * ft_vec_lenght(&L));
-		
-	}
+    float n_dot_l = ft_dot(N, &L);
+    if (n_dot_l > 0) {
+        i += light_point.ratio * n_dot_l / (ft_vec_lenght(N) * ft_vec_lenght(&L));
+
+    }
 
     //spectacular light
     t_xyz v_2N = ft_vec_mult_float(N, 2.0);
-    float dot_NL  = ft_dot(N, &L);
+    float dot_NL = ft_dot(N, &L);
     t_xyz a = ft_vec_mult_float(&v_2N, dot_NL);
     t_xyz R = ft_minus(&a, &L);
     float r_dot_v = ft_dot(&R, V);
@@ -70,12 +67,12 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V)
         float b = r_dot_v / (ft_vec_lenght(&R) * ft_vec_lenght(V));
         i += light_point.ratio * powf(b, s);
     }
-	return (i);
+    return (i);
 }
 
 
 int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t2) {
-    t_xyz *C = &sphere->coord;
+    t_xyz * C = &sphere->coord;
     float r = sphere->r;
     t_xyz OC = ft_minus(O, C);
 
@@ -94,8 +91,7 @@ int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t
 }
 
 
-float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D,t_sphere **closest_sphere, float t_min)
-{
+float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_sphere **closest_sphere, float t_min) {
     float closest_t = FLT_MAX;
     float t1, t2;
     t_objects *object = (*rt)->scene->objs;
@@ -129,27 +125,29 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
         return (t_color) {0, 0, 0};
     } else {
         //printf("closest sphere %i %i\n", closest_sphere->color.r, closest_sphere->color.g);
-		t_xyz P = ft_get_intersec(O, closest_t, D);   //intersec point of sphere
-		t_xyz N = ft_minus(&P, &closest_sphere->coord);// Compute sphere normal at intersection
-		N = ft_normalize(&N);
-		
-		//printf("%f %f %f\n", N.x, N.y, N.z);
+        t_xyz P = ft_get_intersec(O, closest_t, D);   //intersec point of sphere
+        t_xyz N = ft_minus(&P, &closest_sphere->coord);// Compute sphere normal at intersection
+        N = ft_normalize(&N);
+
+        //printf("%f %f %f\n", N.x, N.y, N.z);
         t_xyz min_D = ft_unary_minus(D);
-		float i = ComputeLighting(&P, &N, rt, &min_D);
+        float i = ComputeLighting(&P, &N, rt, &min_D);
         fin_color = ft_set_fin_color(&closest_sphere->color, i);
-		return fin_color;
+        return fin_color;
     }
 }
 
 void draw_ball(t_rt **rt) {
     t_xyz O = (*rt)->scene->camera.coord;
-    //t_xyz camV = (*rt)->scene->camera.vector;
-	int fov = (*rt)->scene->camera.fov;
+    t_xyz V = {0, 0, 1};
+    t_xyz camV = (*rt)->scene->camera.vector;
+    float[3][3] rotate = ft_rotate(V, camV);
+    int fov = (*rt)->scene->camera.fov;
     for (int Sx = 0; Sx < Cw; Sx++) {
         for (int Sy = 0; Sy < Ch; Sy++) {
             int Cx = Sx - Cw / 2;
             int Cy = Ch / 2 - Sy;
-            t_xyz D = CanvasToViewport(Cx, Cy, fov);
+            t_xyz D = rotate * CanvasToViewport(Cx, Cy, fov); //rotate to be implemented
             t_color color = TraceRay(rt, &O, &D);
             uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
             mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);
