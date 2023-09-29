@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 15:49:37 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/26 16:25:15 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/29 11:45:01 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 #define Ch 800
 #define Vw 1
 #define Vh 1
-#define d 1
+//#define d 1
 #define FALSE 0
 #define TRUE 1
 

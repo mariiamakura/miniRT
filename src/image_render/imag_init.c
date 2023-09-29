@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/28 16:55:49 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/29 11:44:38 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ t_xyz ft_normalize(t_xyz *vec) {
     return (t_xyz) {vec->x / length, vec->y / length, vec->z / length};
 }
 
-t_xyz CanvasToViewport(int x, int y) {
+t_xyz CanvasToViewport(int x, int y, int fov) {
+	float d = (float)fov / 60;
     return (t_xyz) {(float) x * Vw / Cw, (float) y * Vh / Ch, d};
 }
 
@@ -89,11 +90,12 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 
 void draw_ball(t_rt **rt) {
     t_xyz O = (*rt)->scene->camera.coord;
+	int fov = (*rt)->scene->camera.fov;
     for (int Sx = 0; Sx < Cw; Sx++) {
         for (int Sy = 0; Sy < Ch; Sy++) {
             int Cx = Sx - Cw / 2;
             int Cy = Ch / 2 - Sy;
-            t_xyz D = CanvasToViewport(Cx, Cy);
+            t_xyz D = CanvasToViewport(Cx, Cy, fov);
             t_color color = TraceRay(rt, &O, &D);
             uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
             mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);
