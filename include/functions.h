@@ -60,7 +60,6 @@ void ft_print_all(t_rt *rt);
 int ft_imag_init(t_rt **rt);
 void ft_key_callback(mlx_key_data_t key_data, void *rt);
 void draw_ball(t_rt **rt);;
-float ft_dot(t_xyz *vec1, t_xyz *vec2);
 void ft_get_viewpoint(int x, int y, t_xyz *viewPoint/*, t_rt **rt*/);
 
 //camera.c
@@ -70,5 +69,13 @@ void	ft_camera_orient(t_rt **rt);
 void ft_gradient(t_color *color, t_rt **rt);
 void ft_put_pixel(int x, int y, int color, t_rt **rt);
 int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
+
+//math.c
+float ft_dot(t_xyz *vec1, t_xyz *vec2);
+t_xyz ft_unary_minus(t_xyz *vec);
+t_xyz ft_plus(t_xyz *vec1, t_xyz *vec2);
+t_xyz ft_minus(t_xyz *vec1, t_xyz *vec2);
+t_xyz ft_normalize(t_xyz *vec);
+float ft_vec_lenght(t_xyz *vec);
 
 #endif

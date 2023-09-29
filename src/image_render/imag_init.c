@@ -6,34 +6,11 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/29 11:44:38 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/29 13:27:26 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/miniRT.h"
-
-float ft_dot(t_xyz *vec1, t_xyz *vec2) {
-
-    return (vec1->x * vec2->x + vec1->y * vec2->y + vec1->z * vec2->z);
-
-}
-
-t_xyz ft_unary_minus(t_xyz *vec) {
-    return (t_xyz) {-vec->x, -vec->y, -vec->z};
-}
-
-t_xyz ft_plus(t_xyz *vec1, t_xyz *vec2) {
-    return (t_xyz) {vec1->x + vec2->x, vec1->y + vec2->y, vec1->z + vec2->z};
-}
-
-t_xyz ft_minus(t_xyz *vec1, t_xyz *vec2) {
-    return (t_xyz) {vec1->x - vec2->x, vec1->y - vec2->y, vec1->z - vec2->z};
-}
-
-t_xyz ft_normalize(t_xyz *vec) {
-    float length = sqrt(ft_dot(vec, vec));
-    return (t_xyz) {vec->x / length, vec->y / length, vec->z / length};
-}
 
 t_xyz CanvasToViewport(int x, int y, int fov) {
 	float d = (float)fov / 60;
@@ -59,10 +36,41 @@ int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t
     return TRUE;
 }
 
+t_xyz ft_get_intersec(t_xyz *O, float closest_t, t_xyz *D)
+{
+	t_xyz P;
+
+	// Compute intersection
+	P.x = O->x + closest_t * D->x;
+	P.y = O->y + closest_t * D->y;
+	P.z = O->z + closest_t * D->z;
+
+	return (P);
+}
+
+float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt)
+{
+	t_ambient amb = (*rt)->scene->ambient;
+	t_light light_point = (*rt)->scene->light;
+	float i = 0.0;
+
+	i += amb.ratio; //ambient included to the color intencity
+	t_xyz L = ft_minus(&light_point.coord, P);
+	
+	float n_dot_l = ft_dot(N, &L);
+	if (n_dot_l > 0)
+	{
+		i += light_point.ratio * n_dot_l / (ft_vec_lenght(N) * ft_vec_lenght(&L));
+	}
+	return (i);
+	
+}
+
 t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
     float t1, t2;
     float closest_t = FLT_MAX;
     t_sphere *closest_sphere = NULL;
+	t_color fin_color;
 
     t_objects *object = (*rt)->scene->objs;
     while (object != NULL) {
@@ -84,7 +92,16 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
     if (closest_sphere == NULL) {
         return (t_color) {255, 255, 255};
     } else {
-        return closest_sphere->color;
+		t_xyz P = ft_get_intersec(O, closest_t, D);   //intersec point of sphere
+		t_xyz N = ft_minus(&P, &closest_sphere->coord);// Compute sphere normal at intersection
+		N = ft_normalize(&N);
+		
+		//printf("%f %f %f\n", N.x, N.y, N.z);
+		float i = ComputeLighting(&P, &N, rt);
+		fin_color.r = closest_sphere->color.r * i;
+		fin_color.g = closest_sphere->color.g * i;
+		fin_color.b = closest_sphere->color.b * i;
+		return fin_color;
     }
 }
 
@@ -102,7 +119,6 @@ void draw_ball(t_rt **rt) {
         }
     }
 }
-
 
 void ft_hook(void *param) {
     t_rt *rt;
