@@ -48,11 +48,12 @@ t_xyz ft_get_intersec(t_xyz *O, float closest_t, t_xyz *D)
 	return (P);
 }
 
-float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt)
+float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V)
 {
 	t_ambient amb = (*rt)->scene->ambient;
 	t_light light_point = (*rt)->scene->light;
 	float i = 0.0;
+    float s = 150; //spectacular light
 
     if (amb.ratio == 0.0)
         i = 0.1;
@@ -70,6 +71,18 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt)
 		i += light_point.ratio * n_dot_l / (ft_vec_lenght(N) * ft_vec_lenght(&L));
 		
 	}
+
+    //spectacular light
+    t_xyz v_2N = ft_vec_mult_float(N, 2.0);
+    float dot_NL  = ft_dot(N, &L);
+    t_xyz a = ft_vec_mult_float(&v_2N, dot_NL);
+    t_xyz R = ft_minus(&a, &L);
+    float r_dot_v = ft_dot(&R, V);
+
+    if (r_dot_v > 0) {
+        float b = r_dot_v / (ft_vec_lenght(&R) * ft_vec_lenght(V));
+        i += light_point.ratio * powf(b, s);
+    }
 	return (i);
 	
 }
@@ -105,14 +118,9 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 		N = ft_normalize(&N);
 		
 		//printf("%f %f %f\n", N.x, N.y, N.z);
-		float i = ComputeLighting(&P, &N, rt);
-		fin_color.r = closest_sphere->color.r * i;
-		fin_color.g = closest_sphere->color.g * i;
-		fin_color.b = closest_sphere->color.b * i;
-		
-		fin_color.r = fminf(fmaxf(fin_color.r, 0), 255);
-		fin_color.g = fminf(fmaxf(fin_color.g, 0), 255);
-		fin_color.b = fminf(fmaxf(fin_color.b, 0), 255);
+        t_xyz min_D = ft_unary_minus(D);
+		float i = ComputeLighting(&P, &N, rt, &min_D);
+        fin_color = ft_set_fin_color(&closest_sphere->color, i);
 		return fin_color;
     }
 }

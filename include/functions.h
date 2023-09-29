@@ -69,6 +69,7 @@ void	ft_camera_orient(t_rt **rt);
 void ft_gradient(t_color *color, t_rt **rt);
 void ft_put_pixel(int x, int y, int color, t_rt **rt);
 int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
+t_color ft_set_fin_color(t_color *origin, float i);
 
 //math.c
 float ft_dot(t_xyz *vec1, t_xyz *vec2);
@@ -77,5 +78,6 @@ t_xyz ft_plus(t_xyz *vec1, t_xyz *vec2);
 t_xyz ft_minus(t_xyz *vec1, t_xyz *vec2);
 t_xyz ft_normalize(t_xyz *vec);
 float ft_vec_lenght(t_xyz *vec);
+t_xyz ft_vec_mult_float(t_xyz *vec, float i);
 
 #endif
