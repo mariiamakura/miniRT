@@ -13,7 +13,8 @@
 #include "../../include/miniRT.h"
 
 t_xyz CanvasToViewport(int x, int y, int fov) {
-	float d = (float)fov / 60;
+
+	float d = Vw / (2 * tan((float)fov / 2 * M_PI / 180));
     return (t_xyz) {(float) x * Vw / Cw, (float) y * Vh / Ch, d};
 }
 
