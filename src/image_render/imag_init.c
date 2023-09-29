@@ -149,7 +149,7 @@ void draw_ball(t_rt **rt) {
         for (int Sy = 0; Sy < Ch; Sy++) {
             int Cx = Sx - Cw / 2;
             int Cy = Ch / 2 - Sy;
-            t_xyz D =  CanvasToViewport(Cx, Cy, fov);
+            t_xyz D = CanvasToViewport(Cx, Cy, fov);
             t_color color = TraceRay(rt, &O, &D);
             uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
             mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);

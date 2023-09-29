@@ -27,6 +27,7 @@ t_xyz ft_vec_multi(t_xyz *vec1, t_xyz *vec2)
     return (res);
 }
 
+
 t_xyz ft_vec_mult_float(t_xyz *vec, float i)
 {
     t_xyz res;
