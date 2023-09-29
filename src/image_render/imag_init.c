@@ -54,7 +54,14 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt)
 	t_light light_point = (*rt)->scene->light;
 	float i = 0.0;
 
-	i += amb.ratio; //ambient included to the color intencity
+    if (amb.ratio == 0.0)
+        i = 0.1;
+    else if (amb.ratio == 1.0)
+        i = 0.9;
+    else {
+        i += amb.ratio; //ambient included to the color intencity
+    }
+
 	t_xyz L = ft_minus(&light_point.coord, P);
 	
 	float n_dot_l = ft_dot(N, &L);
