@@ -17,25 +17,6 @@ t_xyz CanvasToViewport(int x, int y, int fov) {
     return (t_xyz) {(float) x * Vw / Cw, (float) y * Vh / Ch, d};
 }
 
-int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t2) {
-    t_xyz *C = &sphere->coord;
-    float r = sphere->r;
-    t_xyz OC = ft_minus(O, C);
-
-    float k1 = ft_dot(D, D);
-    float k2 = 2 * ft_dot(&OC, D);
-    float k3 = ft_dot(&OC, &OC) - r * r;
-
-    float discriminant = k2 * k2 - 4 * k1 * k3;
-    if (discriminant < 0) {
-        return FALSE;
-    }
-
-    *t1 = (-k2 + sqrt(discriminant)) / (2 * k1);
-    *t2 = (-k2 - sqrt(discriminant)) / (2 * k1);
-    return TRUE;
-}
-
 t_xyz ft_get_intersec(t_xyz *O, float closest_t, t_xyz *D)
 {
 	t_xyz P;
@@ -64,7 +45,12 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V)
     }
 
 	t_xyz L = ft_minus(&light_point.coord, P);
-	
+
+    t_sphere *shadow_sphere = NULL;
+    ClosestIntersection(rt, P, &L, &shadow_sphere, 0.001);
+    if (shadow_sphere != NULL)
+        return (i);
+
 	float n_dot_l = ft_dot(N, &L);
 	if (n_dot_l > 0)
 	{
@@ -84,35 +70,64 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V)
         i += light_point.ratio * powf(b, s);
     }
 	return (i);
-	
 }
 
-t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
-    float t1, t2;
-    float closest_t = FLT_MAX;
-    t_sphere *closest_sphere = NULL;
-	t_color fin_color;
 
+int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t2) {
+    t_xyz *C = &sphere->coord;
+    float r = sphere->r;
+    t_xyz OC = ft_minus(O, C);
+
+    float k1 = ft_dot(D, D);
+    float k2 = 2 * ft_dot(&OC, D);
+    float k3 = ft_dot(&OC, &OC) - r * r;
+
+    float discriminant = k2 * k2 - 4 * k1 * k3;
+    if (discriminant < 0) {
+        return FALSE;
+    }
+
+    *t1 = (-k2 + sqrt(discriminant)) / (2 * k1);
+    *t2 = (-k2 - sqrt(discriminant)) / (2 * k1);
+    return TRUE;
+}
+
+
+float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D,t_sphere **closest_sphere, float t_min)
+{
+    float closest_t = FLT_MAX;
+    float t1, t2;
     t_objects *object = (*rt)->scene->objs;
     while (object != NULL) {
         if (object->type == SPHERE) {
             t_sphere *sphere = &(object->fig.sp);
             if (IntersectRaySphere(O, D, sphere, &t1, &t2)) {
-                if (t1 > 1 && t1 < closest_t) { //if t > d I found with fov
+                if (t1 > t_min && t1 < closest_t) { //if t > d I found with fov
                     closest_t = t1;
-                    closest_sphere = sphere;
+                    *closest_sphere = sphere;
                 }
-                if (t1 > 1 && t2 < closest_t) {
+                if (t1 > t_min && t2 < closest_t) {
                     closest_t = t2;
-                    closest_sphere = sphere;
+                    *closest_sphere = sphere;
                 }
             }
         }
         object = object->next;
     }
+    return (closest_t);
+}
+
+t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
+    float closest_t = FLT_MAX;
+    t_sphere *closest_sphere = NULL;
+    t_color fin_color;
+
+    closest_t = ClosestIntersection(rt, O, D, &closest_sphere, 1);
+
     if (closest_sphere == NULL) {
         return (t_color) {0, 0, 0};
     } else {
+        //printf("closest sphere %i %i\n", closest_sphere->color.r, closest_sphere->color.g);
 		t_xyz P = ft_get_intersec(O, closest_t, D);   //intersec point of sphere
 		t_xyz N = ft_minus(&P, &closest_sphere->coord);// Compute sphere normal at intersection
 		N = ft_normalize(&N);
