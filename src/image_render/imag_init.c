@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/29 13:27:26 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/09/29 14:17:18 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt)
 	if (n_dot_l > 0)
 	{
 		i += light_point.ratio * n_dot_l / (ft_vec_lenght(N) * ft_vec_lenght(&L));
+		
 	}
 	return (i);
 	
@@ -90,7 +91,7 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
         object = object->next;
     }
     if (closest_sphere == NULL) {
-        return (t_color) {255, 255, 255};
+        return (t_color) {0, 0, 0};
     } else {
 		t_xyz P = ft_get_intersec(O, closest_t, D);   //intersec point of sphere
 		t_xyz N = ft_minus(&P, &closest_sphere->coord);// Compute sphere normal at intersection
@@ -101,6 +102,10 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 		fin_color.r = closest_sphere->color.r * i;
 		fin_color.g = closest_sphere->color.g * i;
 		fin_color.b = closest_sphere->color.b * i;
+		
+		fin_color.r = fminf(fmaxf(fin_color.r, 0), 255);
+		fin_color.g = fminf(fmaxf(fin_color.g, 0), 255);
+		fin_color.b = fminf(fmaxf(fin_color.b, 0), 255);
 		return fin_color;
     }
 }
@@ -114,6 +119,7 @@ void draw_ball(t_rt **rt) {
             int Cy = Ch / 2 - Sy;
             t_xyz D = CanvasToViewport(Cx, Cy, fov);
             t_color color = TraceRay(rt, &O, &D);
+			//int intensity = (*rt)->scene->ambient.ratio * 255;
             uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
             mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);
         }
