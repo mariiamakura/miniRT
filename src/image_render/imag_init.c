@@ -35,41 +35,39 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V)
 	t_ambient amb = (*rt)->scene->ambient;
 	t_light light_point = (*rt)->scene->light;
 	float i = 0.0;
-    float s = 150; //spectacular light
+	float s = 150; //spectacular light
 
-    if (amb.ratio == 0.0)
-        i = 0.1;
-    else if (amb.ratio == 1.0)
-        i = 0.9;
-    else {
-        i += amb.ratio; //ambient included to the color intencity
-    }
+	if (amb.ratio == 0.0)
+		i = 0.1;
+	else if (amb.ratio == 1.0)
+		i = 0.9;
+	else {
+		i += amb.ratio; //ambient included to the color intencity
+	}
 
 	t_xyz L = ft_minus(&light_point.coord, P);
 
-    t_sphere *shadow_sphere = NULL;
-    ClosestIntersection(rt, P, &L, &shadow_sphere, 0.001);
-    if (shadow_sphere != NULL)
-        return (i);
-
+	t_objects *shadow_object = NULL;
+	ClosestIntersection(rt, P, &L, &shadow_object, 0.001);
+	if (shadow_object != NULL)
+		return (i);
 	float n_dot_l = ft_dot(N, &L);
 	if (n_dot_l > 0)
 	{
 		i += light_point.ratio * n_dot_l / (ft_vec_lenght(N) * ft_vec_lenght(&L));
-		
 	}
 
-    //spectacular light
-    t_xyz v_2N = ft_vec_mult_float(N, 2.0);
-    float dot_NL  = ft_dot(N, &L);
-    t_xyz a = ft_vec_mult_float(&v_2N, dot_NL);
-    t_xyz R = ft_minus(&a, &L);
-    float r_dot_v = ft_dot(&R, V);
+	//spectacular light
+	t_xyz v_2N = ft_vec_mult_float(N, 2.0);
+	float dot_NL  = ft_dot(N, &L);
+	t_xyz a = ft_vec_mult_float(&v_2N, dot_NL);
+	t_xyz R = ft_minus(&a, &L);
+	float r_dot_v = ft_dot(&R, V);
 
-    if (r_dot_v > 0) {
-        float b = r_dot_v / (ft_vec_lenght(&R) * ft_vec_lenght(V));
-        i += light_point.ratio * powf(b, s);
-    }
+	if (r_dot_v > 0) {
+		float b = r_dot_v / (ft_vec_lenght(&R) * ft_vec_lenght(V));
+		i += light_point.ratio * powf(b, s);
+	}
 	return (i);
 }
 
@@ -93,52 +91,80 @@ int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t
     return TRUE;
 }
 
+int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
+	t_xyz normal = plane->vector;  // Assuming the normal vector is stored in plane->vector and is normalized
+	float denominator = ft_dot(D, &normal);
+	if (fabs(denominator) < 0.0001f) { // Ray is parallel to the plane
+		return FALSE;
+	}
+	t_xyz OC = ft_minus(O, &plane->coord); // Vector from the origin of the ray to a point on the plane
+	*t = -ft_dot(&OC, &normal) / denominator;
+	if (*t < 0.0f) { // The plane is behind the ray
+		return FALSE;
+	}
+	return TRUE;
+}
 
-float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D,t_sphere **closest_sphere, float t_min)
-{
-    float closest_t = FLT_MAX;
-    float t1, t2;
-    t_objects *object = (*rt)->scene->objs;
-    while (object != NULL) {
-        if (object->type == SPHERE) {
-            t_sphere *sphere = &(object->fig.sp);
-            if (IntersectRaySphere(O, D, sphere, &t1, &t2)) {
-                if (t1 > t_min && t1 < closest_t) { //if t > d I found with fov
-                    closest_t = t1;
-                    *closest_sphere = sphere;
-                }
-                if (t1 > t_min && t2 < closest_t) {
-                    closest_t = t2;
-                    *closest_sphere = sphere;
-                }
-            }
-        }
-        object = object->next;
-    }
-    return (closest_t);
+float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_objects **closest_object, float t_min) {
+	float closest_t = FLT_MAX;
+	t_objects *object = (*rt)->scene->objs;
+
+	while (object != NULL) {
+		if (object->type == SPHERE) {
+			t_sphere *sphere = &(object->fig.sp);
+			float t1, t2;
+			if (IntersectRaySphere(O, D, sphere, &t1, &t2)) {
+				if (t1 > t_min && t1 < closest_t) {
+					closest_t = t1;
+					*closest_object = object;
+				}
+				if (t2 > t_min && t2 < closest_t) {
+					closest_t = t2;
+					*closest_object = object;
+				}
+			}
+		}
+		else if (object->type == PLANE) {
+			t_plane *plane = &(object->fig.pl);
+			float t;
+			if (IntersectRayPlane(O, D, plane, &t) && t > t_min && t < closest_t) {
+				closest_t = t;
+				*closest_object = object;
+			}
+		}
+
+		object = object->next;
+	}
+
+	return closest_t;
 }
 
 t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
     float closest_t = FLT_MAX;
-    t_sphere *closest_sphere = NULL;
-    t_color fin_color;
+	t_objects *closest_object = NULL;
 
-    closest_t = ClosestIntersection(rt, O, D, &closest_sphere, 1);
+	closest_t = ClosestIntersection(rt, O, D, &closest_object, 1);
 
-    if (closest_sphere == NULL) {
-        return (t_color) {0, 0, 0};
-    } else {
-        //printf("closest sphere %i %i\n", closest_sphere->color.r, closest_sphere->color.g);
-		t_xyz P = ft_get_intersec(O, closest_t, D);   //intersec point of sphere
-		t_xyz N = ft_minus(&P, &closest_sphere->coord);// Compute sphere normal at intersection
-		N = ft_normalize(&N);
-		
-		//printf("%f %f %f\n", N.x, N.y, N.z);
-        t_xyz min_D = ft_unary_minus(D);
+	if (closest_object == NULL) {
+		return (t_color) {0, 0, 0}; // Background color
+	} else {
+		t_xyz P = ft_get_intersec(O, closest_t, D); // Intersection point
+		t_xyz N; // Normal at intersection
+		t_color color; // Color of the intersected object
+		if (closest_object->type == SPHERE) {
+			N = ft_minus(&P, &closest_object->fig.sp.coord);
+			N = ft_normalize(&N);
+			color = closest_object->fig.sp.color;
+		} else if (closest_object->type == PLANE) {
+			N = closest_object->fig.pl.vector;
+			N = ft_normalize(&N);
+			color = closest_object->fig.pl.color;
+		}
+		t_xyz min_D = ft_unary_minus(D);
 		float i = ComputeLighting(&P, &N, rt, &min_D);
-        fin_color = ft_set_fin_color(&closest_sphere->color, i);
+		t_color fin_color = ft_set_fin_color(&color, i);
 		return fin_color;
-    }
+	}
 }
 
 void draw_ball(t_rt **rt) {
