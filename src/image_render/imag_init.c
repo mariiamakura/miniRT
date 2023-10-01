@@ -92,14 +92,14 @@ int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t
 }
 
 int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
-	t_xyz normal = plane->vector;  // Assuming the normal vector is stored in plane->vector and is normalized
+	t_xyz normal = plane->vector;
 	float denominator = ft_dot(D, &normal);
-	if (fabs(denominator) < 0.0001f) { // Ray is parallel to the plane
+	if (fabs(denominator) < 0.0001f) {
 		return FALSE;
 	}
-	t_xyz OC = ft_minus(O, &plane->coord); // Vector from the origin of the ray to a point on the plane
+	t_xyz OC = ft_minus(O, &plane->coord);
 	*t = -ft_dot(&OC, &normal) / denominator;
-	if (*t < 0.0f) { // The plane is behind the ray
+	if (*t < 0.0f) {
 		return FALSE;
 	}
 	return TRUE;
@@ -146,11 +146,11 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 	closest_t = ClosestIntersection(rt, O, D, &closest_object, 1);
 
 	if (closest_object == NULL) {
-		return (t_color) {0, 0, 0}; // Background color
+		return (t_color) {0, 0, 0};
 	} else {
-		t_xyz P = ft_get_intersec(O, closest_t, D); // Intersection point
-		t_xyz N; // Normal at intersection
-		t_color color; // Color of the intersected object
+		t_xyz P = ft_get_intersec(O, closest_t, D);
+		t_xyz N;
+		t_color color;
 		if (closest_object->type == SPHERE) {
 			N = ft_minus(&P, &closest_object->fig.sp.coord);
 			N = ft_normalize(&N);
