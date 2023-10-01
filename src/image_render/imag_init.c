@@ -167,7 +167,7 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 	}
 }
 
-void draw_ball(t_rt **rt) {
+void render_scene(t_rt **rt) {
     t_xyz O = (*rt)->scene->camera.coord;
     //t_xyz camV = (*rt)->scene->camera.vector;
 	int fov = (*rt)->scene->camera.fov;
@@ -217,7 +217,7 @@ int ft_imag_init(t_rt **rt) {
     }
     mlx_loop_hook((*rt)->window->mlx, ft_hook, (*rt));
     //ft_camera_orient(rt);
-    draw_ball(rt);
+	render_scene(rt);
     //mlx_key_hook((*rt)->window->mlx, ft_key_callback, (*rt));
     mlx_loop((*rt)->window->mlx);
     return (TRUE);

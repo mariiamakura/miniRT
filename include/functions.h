@@ -59,7 +59,7 @@ void ft_print_all(t_rt *rt);
 //imag_init.c
 int ft_imag_init(t_rt **rt);
 void ft_key_callback(mlx_key_data_t key_data, void *rt);
-void draw_ball(t_rt **rt);;
+void render_scene(t_rt **rt);;
 void ft_get_viewpoint(int x, int y, t_xyz *viewPoint/*, t_rt **rt*/);
 float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_objects **closest_object, float t_min);
 
