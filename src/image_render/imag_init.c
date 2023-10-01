@@ -36,6 +36,18 @@ int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t
     return TRUE;
 }
 
+int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
+	t_xyz normal = plane->vector; // Assuming plane->vector is already normalized
+	t_xyz diff = ft_minus(&plane->coord, O);
+	float denom = ft_dot(&normal, D);
+
+	if (fabs(denom) > 1e-6) { // Avoid division by zero and handle parallel case
+		*t = ft_dot(&diff, &normal) / denom;
+		if (*t >= 0) return TRUE; // Change this condition based on your coordinate system and direction
+	}
+	return FALSE;
+}
+
 t_xyz ft_get_intersec(t_xyz *O, float closest_t, t_xyz *D)
 {
 	t_xyz P;
@@ -48,73 +60,80 @@ t_xyz ft_get_intersec(t_xyz *O, float closest_t, t_xyz *D)
 	return (P);
 }
 
-float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt)
-{
+float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt) {
 	t_ambient amb = (*rt)->scene->ambient;
 	t_light light_point = (*rt)->scene->light;
-	float i = 0.0;
-
-    if (amb.ratio == 0.0)
-        i = 0.1;
-    else if (amb.ratio == 1.0)
-        i = 0.9;
-    else {
-        i += amb.ratio; //ambient included to the color intencity
-    }
+	float i = amb.ratio;
 
 	t_xyz L = ft_minus(&light_point.coord, P);
-	
 	float n_dot_l = ft_dot(N, &L);
-	if (n_dot_l > 0)
-	{
+	if (n_dot_l > 0) {
 		i += light_point.ratio * n_dot_l / (ft_vec_lenght(N) * ft_vec_lenght(&L));
-		
 	}
-	return (i);
-	
+
+	return i;
 }
 
 t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
-    float t1, t2;
-    float closest_t = FLT_MAX;
-    t_sphere *closest_sphere = NULL;
-	t_color fin_color;
+	float t;
+	float t1, t2;
+	float closest_t = FLT_MAX;
+	enum e_figure closest_figure = UNKNOWN;
+	t_color closest_color;
+	t_sphere *closest_sphere = NULL;
+	t_plane *closest_plane = NULL;
 
-    t_objects *object = (*rt)->scene->objs;
-    while (object != NULL) {
-        if (object->type == SPHERE) {
-            t_sphere *sphere = &(object->fig.sp);
-            if (IntersectRaySphere(O, D, sphere, &t1, &t2)) {
-                if (t1 > 1 && t1 < closest_t) { //if t > d I found with fov
-                    closest_t = t1;
-                    closest_sphere = sphere;
-                }
-                if (t1 > 1 && t2 < closest_t) {
-                    closest_t = t2;
-                    closest_sphere = sphere;
-                }
-            }
-        }
-        object = object->next;
-    }
-    if (closest_sphere == NULL) {
-        return (t_color) {0, 0, 0};
-    } else {
-		t_xyz P = ft_get_intersec(O, closest_t, D);   //intersec point of sphere
-		t_xyz N = ft_minus(&P, &closest_sphere->coord);// Compute sphere normal at intersection
+	t_objects *object = (*rt)->scene->objs;
+	while (object != NULL) {
+		if (object->type == SPHERE) {
+			t_sphere *sphere = &(object->fig.sp);
+			if (IntersectRaySphere(O, D, sphere, &t1, &t2)) {
+				if (t1 < closest_t && t1 >= 0) {
+					closest_t = t1;
+					closest_figure = SPHERE;
+					closest_color = sphere->color;
+					closest_sphere = sphere;
+				}
+			}
+		}
+		else if (object->type == PLANE) {
+			t_plane *plane = &(object->fig.pl);
+			if (IntersectRayPlane(O, D, plane, &t)) {
+				if (t < closest_t && t >= 0) {
+					closest_t = t;
+					closest_figure = PLANE;
+					closest_color = plane->color;
+					closest_plane = plane;
+				}
+			}
+		}
+		object = object->next;
+	}
+
+	if (closest_figure == UNKNOWN) {
+		return (t_color){0, 0, 0};
+	}
+	else {
+		t_xyz P = ft_get_intersec(O, closest_t, D);
+		t_xyz N;
+		if (closest_figure == SPHERE && closest_sphere != NULL) {
+			N = ft_minus(&P, &closest_sphere->coord);  // Use the closest sphere here
+		} else if (closest_figure == PLANE && closest_plane != NULL) {
+			N = closest_plane->vector;  // Use the closest plane here
+		}
 		N = ft_normalize(&N);
-		
-		//printf("%f %f %f\n", N.x, N.y, N.z);
+
 		float i = ComputeLighting(&P, &N, rt);
-		fin_color.r = closest_sphere->color.r * i;
-		fin_color.g = closest_sphere->color.g * i;
-		fin_color.b = closest_sphere->color.b * i;
-		
-		fin_color.r = fminf(fmaxf(fin_color.r, 0), 255);
-		fin_color.g = fminf(fmaxf(fin_color.g, 0), 255);
-		fin_color.b = fminf(fmaxf(fin_color.b, 0), 255);
-		return fin_color;
-    }
+		closest_color.r *= i;
+		closest_color.g *= i;
+		closest_color.b *= i;
+
+		// Clip the colors to the range [0, 255]
+		closest_color.r = fminf(fmaxf(closest_color.r, 0), 255);
+		closest_color.g = fminf(fmaxf(closest_color.g, 0), 255);
+		closest_color.b = fminf(fmaxf(closest_color.b, 0), 255);
+		return closest_color;
+	}
 }
 
 void draw_ball(t_rt **rt) {

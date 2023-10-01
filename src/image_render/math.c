@@ -28,3 +28,7 @@ t_xyz ft_normalize(t_xyz *vec) {
     float length = sqrt(ft_dot(vec, vec));
     return (t_xyz) {vec->x / length, vec->y / length, vec->z / length};
 }
+
+t_xyz ft_scale(t_xyz *vec, float scalar) {
+	return (t_xyz){vec->x * scalar, vec->y * scalar, vec->z * scalar};
+}
