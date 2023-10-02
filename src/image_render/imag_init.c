@@ -35,14 +35,14 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V)
 	t_ambient amb = (*rt)->scene->ambient;
 	t_light light_point = (*rt)->scene->light;
 	float i = 0.0;
-	float s = 150; //spectacular light
+	float s = 150;
 
 	if (amb.ratio == 0.0)
 		i = 0.1;
 	else if (amb.ratio == 1.0)
 		i = 0.9;
 	else {
-		i += amb.ratio; //ambient included to the color intencity
+		i += amb.ratio;
 	}
 
 	t_xyz L = ft_minus(&light_point.coord, P);
@@ -57,7 +57,6 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V)
 		i += light_point.ratio * n_dot_l / (ft_vec_lenght(N) * ft_vec_lenght(&L));
 	}
 
-	//spectacular light
 	t_xyz v_2N = ft_vec_mult_float(N, 2.0);
 	float dot_NL  = ft_dot(N, &L);
 	t_xyz a = ft_vec_mult_float(&v_2N, dot_NL);
@@ -105,6 +104,63 @@ int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
 	return TRUE;
 }
 
+int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1, float *t2) {
+	t_xyz OC = ft_minus(O, &cylinder->coord);
+	t_xyz V = ft_normalize(&cylinder->vector);
+
+	t_xyz temp = ft_vec_mult_float(&V, ft_dot(D, &V));
+	t_xyz DP;
+	DP.x = D->x - temp.x;
+	DP.y = D->y - temp.y;
+	DP.z = D->z - temp.z;
+
+	temp = ft_vec_mult_float(&V, ft_dot(&OC, &V));
+	t_xyz OCp;
+	OCp.x = OC.x - temp.x;
+	OCp.y = OC.y - temp.y;
+	OCp.z = OC.z - temp.z;
+
+	float A = ft_dot(&DP, &DP);
+	float B = 2 * ft_dot(&OCp, &DP);
+	float C = ft_dot(&OCp, &OCp) - (cylinder->diameter / 2) * (cylinder->diameter / 2);
+
+	float discriminant = B * B - 4 * A * C;
+	if (discriminant < 0) {
+		return FALSE;
+	}
+
+	float tempT1 = (-B + sqrt(discriminant)) / (2 * A);
+	float tempT2 = (-B - sqrt(discriminant)) / (2 * A);
+
+	t_xyz tempP1 = ft_vec_mult_float(D, tempT1);
+	t_xyz P1 = ft_plus(O, &tempP1);
+	t_xyz tempP2 = ft_vec_mult_float(D, tempT2);
+	t_xyz P2 = ft_plus(O, &tempP2);
+
+	t_xyz tempH1 = ft_minus(&P1, &cylinder->coord);
+	float height1 = ft_dot(&V, &tempH1);
+	t_xyz tempH2 = ft_minus(&P2, &cylinder->coord);
+	float height2 = ft_dot(&V, &tempH2);
+
+	if (height1 >= 0 && height1 <= cylinder->height) {
+		*t1 = tempT1;
+	} else {
+		*t1 = FLT_MAX;
+	}
+
+	if (height2 >= 0 && height2 <= cylinder->height) {
+		*t2 = tempT2;
+	} else {
+		*t2 = FLT_MAX;
+	}
+
+	if (*t1 == FLT_MAX && *t2 == FLT_MAX) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_objects **closest_object, float t_min) {
 	float closest_t = FLT_MAX;
 	t_objects *object = (*rt)->scene->objs;
@@ -132,6 +188,14 @@ float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_objects **closest_obj
 				*closest_object = object;
 			}
 		}
+		else if (object->type == CYLINDER) {
+			t_cylinder *cylinder = &(object->fig.cy);
+			float t1, t2;
+			if (IntersectRayCylinder(O, D, cylinder, &t1, &t2) && ((t1 > t_min && t1 < closest_t) || (t2 > t_min && t2 < closest_t))) {
+				closest_t = t1 > t_min && t1 < closest_t ? t1 : t2;
+				*closest_object = object;
+			}
+		}
 
 		object = object->next;
 	}
@@ -155,10 +219,20 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 			N = ft_minus(&P, &closest_object->fig.sp.coord);
 			N = ft_normalize(&N);
 			color = closest_object->fig.sp.color;
-		} else if (closest_object->type == PLANE) {
+		}
+		else if (closest_object->type == PLANE) {
 			N = closest_object->fig.pl.vector;
 			N = ft_normalize(&N);
 			color = closest_object->fig.pl.color;
+		}
+		else if (closest_object->type == CYLINDER) {
+			t_cylinder *cylinder = &closest_object->fig.cy;
+			t_xyz temp = ft_vec_mult_float(&cylinder->vector, ft_dot(&N, &cylinder->vector));
+			N.x = N.x - temp.x;
+			N.y = N.y - temp.y;
+			N.z = N.z - temp.z;
+			N = ft_normalize(&N);
+			color = cylinder->color;
 		}
 		t_xyz min_D = ft_unary_minus(D);
 		float i = ComputeLighting(&P, &N, rt, &min_D);
