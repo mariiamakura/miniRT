@@ -83,7 +83,8 @@ t_xyz ft_vec_mult_float(t_xyz *vec, float i);
 t_xyz ft_vec_multi(t_xyz *vec1, t_xyz *vec2);
 float ft_2d_dot(t_xy *vec1, t_xy *vec2);
 t_matrix_3x3 ft_rotate(t_xyz *vec1, t_xyz *vec2);
-t_xyz ft_matrix_xyz_multi(t_matrix_3x3 *mat, t_xyz *vec);
+t_xyz ft_mul_mat_xyz(t_matrix_3x3 *mat, t_xyz *vec);
+t_xyz ft_mul_xyz_mat(t_xyz *vec, t_matrix_3x3 *mat);
 
 
 void ft_print_matrix(t_matrix_3x3 *mat);
