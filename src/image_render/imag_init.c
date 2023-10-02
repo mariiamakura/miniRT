@@ -171,6 +171,18 @@ void ft_hook(void *param) {
         (*rt)->window->img->instances[0].x -= 5;
     if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_RIGHT))
         (*rt)->window->img->instances[0].x += 5;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_W))
+        (*rt)->scene->camera.coord.z += 1;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_S))
+        (*rt)->scene->camera.coord.z -= 1;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_D))
+        (*rt)->scene->camera.coord.x += 1;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_A))
+        (*rt)->scene->camera.coord.x -= 1;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_SPACE))
+        (*rt)->scene->camera.coord.y += 1;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_LEFT_SHIFT))
+        (*rt)->scene->camera.coord.y -= 1;
 
     draw_ball(rt);
 }
