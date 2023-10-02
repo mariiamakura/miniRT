@@ -1,19 +1,73 @@
 
 #include "../../include/miniRT.h"
 
+void ft_print_matrix(t_matrix_3x3 *mat)
+{
+    for (int i = 0; i < 3; i++){
+        for (int j = 0; j < 3; j++)
+            printf("%f ", mat->matrix_3x3[i][j]);
+        printf("\n");
+    }
+}
+
+void ft_print_xyz(t_xyz *vec)
+{
+    printf("vec %f %f %f\n", vec->x, vec->y, vec->z);
+}
+
+void ft_print_xy(t_xy *vec)
+{
+    printf("vec %f %f\n", vec->x, vec->y);
+}
 
 float ft_2d_dot(t_xy *vec1, t_xy *vec2)
 {
     return (vec1->x * vec2->x + vec1->y * vec2->y);
 }
 
-float ft_angle(t_xy *vec1, t_xy *vec2)
+t_xyz ft_mul_xyz(t_xyz *vec1, t_xyz *vec2)
+{
+    t_xyz res;
+
+    res.x = vec1->y * vec2->z - vec1->z * vec2->y;
+    res.y = vec1->z * vec2->x - vec1->x * vec2->z;
+    res.z = vec1->x * vec2->y - vec1->y * vec2->x;
+
+    return (res);
+}
+
+t_xyz ft_mul_xy(t_xy *vec1, t_xy *vec2)
+{
+    t_xyz vec1_xyz = {vec1->x, vec1->y, 0.0};
+    t_xyz vec2_xyz = {vec2->x, vec2->y, 0.0};
+    t_xyz res = ft_mul_xyz(&vec1_xyz, &vec2_xyz);
+    return (res);
+}
+
+float ft_sin_xy(t_xy *vec1, t_xy *vec2)
+{
+    float len1 = sqrt(ft_2d_dot(vec1, vec1));
+    float len2 = sqrt(ft_2d_dot(vec2, vec2));
+    t_xyz vec12 = ft_mul_xy(vec1, vec2);
+    float len12 = fabsf(vec12.z);
+    float direct = vec12.z / len12;
+
+    if (len1 == 0.0 || len2 == 0.0 || len12 == 0.0)
+        return (0.0);
+
+    return direct * len12 / len1 / len2;
+}
+
+float ft_cos_xy(t_xy *vec1, t_xy *vec2)
 {
     float len1 = sqrt(ft_2d_dot(vec1, vec1));
     float len2 = sqrt(ft_2d_dot(vec2, vec2));
     float dot = ft_2d_dot(vec1, vec2);
 
-    return (acosf(dot / len1 / len2));
+    if (len1 == 0.0 || len2 == 0.0)
+        return (1.0);
+
+    return (dot / len1 / len2);
 }
 
 t_xyz ft_matrix_xyz_multi(t_matrix_3x3 *mat, t_xyz *vec)
@@ -51,42 +105,42 @@ t_matrix_3x3 ft_rotate(t_xyz *vec1, t_xyz *vec2)
 {
     t_xy vec1_x = {vec1->y, vec1->z};
     t_xy vec2_x = {vec2->y, vec2->z};
-	//printf("x %f\n", vec1_x.x);
 
     t_xy vec1_y = {vec1->x, vec1->z};
     t_xy vec2_y = {vec2->x, vec2->z};
-	//printf("y %f\n", vec1_y.y);
 
     t_xy vec1_z = {vec1->x, vec1->y};
     t_xy vec2_z = {vec2->x, vec2->y};
-	//printf("z %f\n", vec1_z.x);
 
+    float cos_x = ft_cos_xy(&vec1_x, &vec2_x);
+    float cos_y = ft_cos_xy(&vec1_y, &vec2_y);
+    float cos_z = ft_cos_xy(&vec1_z, &vec2_z);
+    float sin_x = ft_sin_xy(&vec1_x, &vec2_x);
+    float sin_y = ft_sin_xy(&vec1_y, &vec2_y);
+    float sin_z = ft_sin_xy(&vec1_z, &vec2_z);
 
-    float angle_x = ft_angle(&vec1_x, &vec2_x); //angle of rotation around x
-    float angle_y = ft_angle(&vec1_y, &vec2_y); //angle of rotation around y
-    float angle_z = ft_angle(&vec1_z, &vec2_z); //angle of rotation around z
-
-	//printf("x angle %f y %f %f\n", angle_x, angle_y, angle_z);
+    //printf("cos %f %f %f\n", cos_x, cos_y, cos_z);
+    //printf("sin %f %f %f\n", sin_x, sin_y, sin_z);
     t_matrix_3x3 rotate_matrix_x = {
 		{
             {1.0, 0.0, 0.0},
-            {0.0, cosf(angle_x), -sinf(angle_x)},
-            {0.0, sinf(angle_x), cosf(angle_x)}
+            {0.0, cos_x, -sin_x},
+            {0.0, sin_x, cos_x}
 		}
     };
 
     t_matrix_3x3 rotate_matrix_y = {
 		{
-            {cosf(angle_y), 0.0, sinf(angle_y)},
+            {cos_y, 0.0, sin_y},
             {0.0, 1.0, 0.0},
-            {-sinf(angle_y), 0.0, cosf(angle_y)}
+            {-sin_y, 0.0, cos_y}
 		}
     };
 
     t_matrix_3x3 rotate_matrix_z = {
 		{
-            {cosf(angle_z), -sinf(angle_z), 0.0},
-            {sinf(angle_z), cosf(angle_z), 0.0},
+            {cos_z, -sin_z, 0.0},
+            {sin_z, cos_z, 0.0},
             {0.0, 0.0, 1.0}
 		}
     };

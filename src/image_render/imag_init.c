@@ -139,21 +139,20 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 
 void draw_ball(t_rt **rt) {
     t_xyz O = (*rt)->scene->camera.coord;
-    //t_xyz V = {0, 1, 0};
-    //t_xyz camV = (*rt)->scene->camera.vector;
+    t_xyz V = {0.0, 0.0, 1.0};
+    t_xyz camV = (*rt)->scene->camera.vector;
 	//printf("cam vector %f %f %f\n", camV.x, camV.y, camV.z);
-    //t_matrix_3x3 rotate = ft_rotate(&V, &camV);
+    t_matrix_3x3 rotate = ft_rotate(&V, &camV);
 	//printf("main matrix camera 1_1 %f 2_1 %f 3_1 %f\n", rotate.matrix_3x3[0][0], rotate.matrix_3x3[1][0], rotate.matrix_3x3[2][0]);
     int fov = (*rt)->scene->camera.fov;
     for (int Sx = 0; Sx < Cw; Sx++) {
         for (int Sy = 0; Sy < Ch; Sy++) {
             int Cx = Sx - Cw / 2;
             int Cy = Ch / 2 - Sy;
-			//t_xyz CanToV = CanvasToViewport(Cx, Cy, fov); //between 1 nad -1
-            //t_xyz D = ft_matrix_xyz_multi(&rotate, &CanToV); 
+			t_xyz CanToV = CanvasToViewport(Cx, Cy, fov); //between 1 nad -1
+            t_xyz D = ft_matrix_xyz_multi(&rotate, &CanToV);
 			//printf("normilized D %f %f %f\n", D.x, D.y, D.z);
-        	t_xyz D = CanvasToViewport(Cx, Cy, fov);
-			//D = ft_normalize(&D);//rotate to be implemented
+        	//t_xyz D = CanvasToViewport(Cx, Cy, fov);
             t_color color = TraceRay(rt, &O, &D);
             uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
             mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);

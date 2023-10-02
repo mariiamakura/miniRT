@@ -38,3 +38,31 @@ int	main(int ac, char **av)
 	ft_free_rt(rt);
 	return (0);
 }
+
+
+
+//int main()
+//{
+//    t_matrix_3x3 matrix;
+//    t_matrix_3x3 matrix_rev;
+//    t_xyz vec_orig = {0.0, 0.0, 1.0};
+//    t_xyz vec_fin = {0.5, 0.5, 0.5};
+//    vec_fin = ft_normalize(&vec_fin);
+//
+//    matrix = ft_rotate(&vec_orig, &vec_fin);
+//    t_xyz res = ft_matrix_xyz_multi(&matrix, &vec_orig);
+//
+//    matrix_rev = ft_rotate(&vec_fin, &vec_orig);
+//    t_xyz res_rev = ft_matrix_xyz_multi(&matrix_rev, &vec_fin);
+//
+//    ft_print_xyz(&vec_orig);
+//    ft_print_xyz(&vec_fin);
+//    printf("\n");
+//    ft_print_matrix(&matrix);
+//    ft_print_xyz(&res);
+//    printf("\n");
+//    ft_print_matrix(&matrix_rev);
+//    ft_print_xyz(&res_rev);
+//
+//}
+//
