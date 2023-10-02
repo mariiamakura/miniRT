@@ -158,19 +158,21 @@ void draw_ball(t_rt **rt) {
 }
 
 void ft_hook(void *param) {
-    t_rt *rt;
+    t_rt **rt;
 
-    rt = (t_rt *) param;
-    if (mlx_is_key_down(rt->window->mlx, MLX_KEY_ESCAPE))
-        mlx_close_window(rt->window->mlx);
-    if (mlx_is_key_down(rt->window->mlx, MLX_KEY_UP))
-        rt->window->img->instances[0].y -= 5;
-    if (mlx_is_key_down(rt->window->mlx, MLX_KEY_DOWN))
-        rt->window->img->instances[0].y += 5;
-    if (mlx_is_key_down(rt->window->mlx, MLX_KEY_LEFT))
-        rt->window->img->instances[0].x -= 5;
-    if (mlx_is_key_down(rt->window->mlx, MLX_KEY_RIGHT))
-        rt->window->img->instances[0].x += 5;
+    rt = (t_rt **) param;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_ESCAPE))
+        mlx_close_window((*rt)->window->mlx);
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_UP))
+        (*rt)->window->img->instances[0].y -= 5;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_DOWN))
+        (*rt)->window->img->instances[0].y += 5;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_LEFT))
+        (*rt)->window->img->instances[0].x -= 5;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_RIGHT))
+        (*rt)->window->img->instances[0].x += 5;
+
+    draw_ball(rt);
 }
 
 int ft_imag_init(t_rt **rt) {
@@ -189,10 +191,9 @@ int ft_imag_init(t_rt **rt) {
         mlx_close_window((*rt)->window->mlx);
         return (ft_error("img error"));
     }
-    mlx_loop_hook((*rt)->window->mlx, ft_hook, (*rt));
+    mlx_loop_hook((*rt)->window->mlx, ft_hook, rt);
     //ft_camera_orient(rt);
-    draw_ball(rt);
-    //mlx_key_hook((*rt)->window->mlx, ft_key_callback, (*rt));
+//    mlx_key_hook((*rt)->window->mlx, ft_key_callback, rt);
     mlx_loop((*rt)->window->mlx);
     return (TRUE);
 }
