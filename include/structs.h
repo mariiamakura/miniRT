@@ -4,6 +4,10 @@
 #include "miniRT.h"
 
 
+typedef struct s_matrix_3x3 {
+    float matrix_3x3[3][3];
+} t_matrix_3x3;
+
 typedef struct s_color
 {
 	int	r;
