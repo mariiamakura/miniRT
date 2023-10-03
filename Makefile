@@ -40,7 +40,7 @@ fclean: clean
 re: clean all
 
 run: all
-	./$(NAME)
+	@./$(NAME) $(ARGS)
 
 .PHONY: all, clean, fclean, re, libmlx
 

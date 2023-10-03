@@ -39,7 +39,6 @@ int	main(int ac, char **av)
 	return (0);
 }
 
-
 //void test(t_xyz vec_orig, t_xyz vec_fin) {
 //    printf("-- Test rotation\n");
 //    vec_orig = ft_xyz_normalize(&vec_orig);
