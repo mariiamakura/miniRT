@@ -69,25 +69,35 @@ void ft_put_pixel(int x, int y, int color, t_rt **rt);
 int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
 t_color ft_set_fin_color(t_color *origin, float i);
 
-//math.c
+//xy_math.c
+void ft_xy_print(t_xy *vec);
+float ft_xy_dot(t_xy *vec1, t_xy *vec2);
+t_xyz ft_xy_mul(t_xy *vec1, t_xy *vec2);
+float ft_xy_sin(t_xy *vec1, t_xy *vec2);
+float ft_xy_cos(t_xy *vec1, t_xy *vec2);
+
+//xyz_math.c
+void ft_xyz_print(t_xyz *vec);
+float ft_xyz_dot(t_xyz *vec1, t_xyz *vec2);
+float ft_xyz_length(t_xyz *vec);
 t_xyz ft_xyz_unary_minus(t_xyz *vec);
+t_xyz ft_xyz_mul(t_xyz *vec1, t_xyz *vec2);
+t_xyz ft_xyz_elm_mul(t_xyz *vec1, t_xyz *vec2);
+t_xyz ft_xyz_mul_num(t_xyz *vec, float i);
 t_xyz ft_xyz_plus(t_xyz *vec1, t_xyz *vec2);
 t_xyz ft_xyz_minus(t_xyz *vec1, t_xyz *vec2);
 t_xyz ft_xyz_normalize(t_xyz *vec);
-float ft_xyz_length(t_xyz *vec);
-t_xyz ft_xyz_mul_num(t_xyz *vec, float i);
-t_xyz ft_xyz_elm_mul(t_xyz *vec1, t_xyz *vec2);
 
-float ft_xyz_dot(t_xyz *vec1, t_xyz *vec2);
-float ft_xy_dot(t_xy *vec1, t_xy *vec2);
-
+//mat_math.c
+void ft_mat_print(t_matrix_3x3 *mat);
 t_xyz ft_mat_mul_xyz(t_matrix_3x3 *mat, t_xyz *vec);
 t_xyz ft_xyz_mul_mat(t_xyz *vec, t_matrix_3x3 *mat);
+t_matrix_3x3 ft_mat_mul(t_matrix_3x3 mat1, t_matrix_3x3 mat2);
 
-void ft_mat_print(t_matrix_3x3 *mat);
-void ft_xyz_print(t_xyz *vec);
-void ft_xy_print(t_xy *vec);
-
+//math.c
+t_matrix_3x3 ft_rotate_x(float cos_x, float sin_x);
+t_matrix_3x3 ft_rotate_y(float cos_y, float sin_y);
+t_matrix_3x3 ft_rotate_z(float cos_z, float sin_z);
 t_matrix_3x3 ft_rotate(t_xyz *vec1, t_xyz *vec2);
 
 #endif
