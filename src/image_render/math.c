@@ -55,8 +55,8 @@ t_matrix_3x3 ft_rotate(t_xyz *vec1, t_xyz *vec2) {
     t_matrix_3x3 rotate_matrix_z = ft_rotate_z(cos_z, sin_z);
     res = ft_mat_mul_xyz(&rotate_matrix_z, &res);
 
-    t_matrix_3x3 rotate_matrix_xy = ft_mat_mul(rotate_matrix_y, rotate_matrix_x);
-    t_matrix_3x3 rotate_matrix_xyz = ft_mat_mul(rotate_matrix_z, rotate_matrix_xy);
+    t_matrix_3x3 rotate_matrix_xy = ft_mat_mul(&rotate_matrix_y, &rotate_matrix_x);
+    t_matrix_3x3 rotate_matrix_xyz = ft_mat_mul(&rotate_matrix_z, &rotate_matrix_xy);
 
 //    t_xyz res1 = ft_mat_mul_xyz(&rotate_matrix_z, vec1);
 //    t_xyz res2 = ft_mat_mul_xyz(&rotate_matrix_z, &res1);

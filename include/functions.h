@@ -92,7 +92,7 @@ t_xyz ft_xyz_normalize(t_xyz *vec);
 void ft_mat_print(t_matrix_3x3 *mat);
 t_xyz ft_mat_mul_xyz(t_matrix_3x3 *mat, t_xyz *vec);
 t_xyz ft_xyz_mul_mat(t_xyz *vec, t_matrix_3x3 *mat);
-t_matrix_3x3 ft_mat_mul(t_matrix_3x3 mat1, t_matrix_3x3 mat2);
+t_matrix_3x3 ft_mat_mul(t_matrix_3x3 *mat1, t_matrix_3x3 *mat2);
 
 //math.c
 t_matrix_3x3 ft_rotate_x(float cos_x, float sin_x);

@@ -29,14 +29,14 @@ t_xyz ft_xyz_mul_mat(t_xyz *vec, t_matrix_3x3 *mat) {
     return (res);
 }
 
-t_matrix_3x3 ft_mat_mul(t_matrix_3x3 mat1, t_matrix_3x3 mat2) {
-    t_xyz mat1_1 = {mat1.matrix_3x3[0][0], mat1.matrix_3x3[0][1], mat1.matrix_3x3[0][2]};
-    t_xyz mat1_2 = {mat1.matrix_3x3[1][0], mat1.matrix_3x3[1][1], mat1.matrix_3x3[1][2]};
-    t_xyz mat1_3 = {mat1.matrix_3x3[2][0], mat1.matrix_3x3[2][1], mat1.matrix_3x3[2][2]};
+t_matrix_3x3 ft_mat_mul(t_matrix_3x3 *mat1, t_matrix_3x3 *mat2) {
+    t_xyz mat1_1 = {mat1->matrix_3x3[0][0], mat1->matrix_3x3[0][1], mat1->matrix_3x3[0][2]};
+    t_xyz mat1_2 = {mat1->matrix_3x3[1][0], mat1->matrix_3x3[1][1], mat1->matrix_3x3[1][2]};
+    t_xyz mat1_3 = {mat1->matrix_3x3[2][0], mat1->matrix_3x3[2][1], mat1->matrix_3x3[2][2]};
 
-    t_xyz mat2_1 = {mat2.matrix_3x3[0][0], mat2.matrix_3x3[1][0], mat2.matrix_3x3[2][0]};
-    t_xyz mat2_2 = {mat2.matrix_3x3[0][1], mat2.matrix_3x3[1][1], mat2.matrix_3x3[2][1]};
-    t_xyz mat2_3 = {mat2.matrix_3x3[0][2], mat2.matrix_3x3[1][2], mat2.matrix_3x3[2][2]};
+    t_xyz mat2_1 = {mat2->matrix_3x3[0][0], mat2->matrix_3x3[1][0], mat2->matrix_3x3[2][0]};
+    t_xyz mat2_2 = {mat2->matrix_3x3[0][1], mat2->matrix_3x3[1][1], mat2->matrix_3x3[2][1]};
+    t_xyz mat2_3 = {mat2->matrix_3x3[0][2], mat2->matrix_3x3[1][2], mat2->matrix_3x3[2][2]};
 
     t_matrix_3x3 res = {
             {
