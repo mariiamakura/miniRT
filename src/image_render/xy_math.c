@@ -6,14 +6,15 @@ void ft_xy_print(t_xy *vec) {
 }
 
 float ft_xy_dot(t_xy *vec1, t_xy *vec2) {
-    return (vec1->x * vec2->x + vec1->y * vec2->y);
+    t_xyz vec1_xyz = {vec1->x, vec1->y, 0.0};
+    t_xyz vec2_xyz = {vec2->x, vec2->y, 0.0};
+    return ft_xyz_dot(&vec1_xyz, &vec2_xyz);
 }
 
 t_xyz ft_xy_mul(t_xy *vec1, t_xy *vec2) {
     t_xyz vec1_xyz = {vec1->x, vec1->y, 0.0};
     t_xyz vec2_xyz = {vec2->x, vec2->y, 0.0};
-    t_xyz res = ft_xyz_mul(&vec1_xyz, &vec2_xyz);
-    return (res);
+    return ft_xyz_mul(&vec1_xyz, &vec2_xyz);
 }
 
 float ft_xy_sin(t_xy *vec1, t_xy *vec2) {

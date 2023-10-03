@@ -1,84 +1,98 @@
 
 #include "../../include/miniRT.h"
 
-t_matrix_3x3 ft_rotate_x(float cos_x, float sin_x) {
+t_matrix_3x3 ft_xy_rotate_ox(float cos_x, float sin_x) {
     return (t_matrix_3x3) {
             {
-                    {1.0, 0.0, 0.0},
-                    {0.0, cos_x, -sin_x},
-                    {0.0, sin_x, cos_x}
+                    {1, 0,     0     },
+                    {0, cos_x, -sin_x},
+                    {0, sin_x, cos_x }
             }
     };
 }
 
-t_matrix_3x3 ft_rotate_y(float cos_y, float sin_y) {
+t_matrix_3x3 ft_xy_rotate_oy(float cos_y, float sin_y) {
     return (t_matrix_3x3) {
             {
-                    {cos_y, 0.0, sin_y},
-                    {0.0, 1.0, 0.0},
-                    {-sin_y, 0.0, cos_y}
+                    {cos_y,  0, sin_y},
+                    {0,      1, 0    },
+                    {-sin_y, 0, cos_y}
             }
     };
 }
 
-t_matrix_3x3 ft_rotate_z(float cos_z, float sin_z) {
+t_matrix_3x3 ft_xy_rotate_oz(float cos_z, float sin_z) {
     return (t_matrix_3x3) {
             {
-                    {cos_z, -sin_z, 0.0},
-                    {sin_z, cos_z, 0.0},
-                    {0.0, 0.0, 1.0}
+                    {cos_z, -sin_z, 0},
+                    {sin_z, cos_z,  0},
+                    {0,     0,      1}
             }
     };
 }
 
-t_matrix_3x3 ft_rotate(t_xyz *vec1, t_xyz *vec2) {
-    t_xyz res = *vec1;
+t_matrix_3x3 ft_xyz_rotate(t_xyz *vec1, t_xyz *vec2) {
+    t_xy xy_OY = {0, 1};
 
-    t_xy vec1_x = {res.y, res.z};
-    t_xy vec2_x = {vec2->y, vec2->z};
-    float cos_x = ft_xy_cos(&vec1_x, &vec2_x);
-    float sin_x = ft_xy_sin(&vec1_x, &vec2_x);
-    t_matrix_3x3 rotate_matrix_x = ft_rotate_x(cos_x, sin_x);
-    res = ft_mat_mul_xyz(&rotate_matrix_x, &res);
+    // Rotation vec1 to OYZ space in XYZ space
+    t_xy xy_vec1 = {vec1->x, vec1->y};
+    t_matrix_3x3 rotate_mat_1_oz = ft_xy_rotate_oz(
+            ft_xy_cos(&xy_vec1, &xy_OY),
+            ft_xy_sin(&xy_vec1, &xy_OY)
+    );
+    t_xyz vec1_1 = ft_mat_mul_xyz(&rotate_mat_1_oz, vec1);
 
-    t_xy vec1_y = {res.z, res.x};
-    t_xy vec2_y = {vec2->z, vec2->x};
-    float cos_y = ft_xy_cos(&vec1_y, &vec2_y);
-    float sin_y = ft_xy_sin(&vec1_y, &vec2_y);
-    t_matrix_3x3 rotate_matrix_y = ft_rotate_y(cos_y, sin_y);
-    res = ft_mat_mul_xyz(&rotate_matrix_y, &res);
+    // Rotation vec1_1 to OZ ray in YZ space
+    t_xy yz_vec1_1 = {vec1_1.y, vec1_1.z};
+    t_matrix_3x3 rotate_mat_1_ox = ft_xy_rotate_ox(
+            // Here, xy_OY is vertical ray in YZ space (OZ in XYZ space)
+            ft_xy_cos(&yz_vec1_1, &xy_OY),
+            ft_xy_sin(&yz_vec1_1, &xy_OY)
+    );
 
-    t_xy vec1_z = {res.x, res.y};
-    t_xy vec2_z = {vec2->x, vec2->y};
-    float cos_z = ft_xy_cos(&vec1_z, &vec2_z);
-    float sin_z = ft_xy_sin(&vec1_z, &vec2_z);
-    t_matrix_3x3 rotate_matrix_z = ft_rotate_z(cos_z, sin_z);
-    res = ft_mat_mul_xyz(&rotate_matrix_z, &res);
+    // Rotation vec2 to OYZ space in XYZ space
+    t_xy xy_vec2 = {vec2->x, vec2->y};
+    t_matrix_3x3 rotate_mat_2_oz_transpose = ft_xy_rotate_oz(
+            ft_xy_cos(&xy_vec2, &xy_OY),
+            ft_xy_sin(&xy_vec2, &xy_OY)
+    );
+    t_xyz vec2_1 = ft_mat_mul_xyz(&rotate_mat_2_oz_transpose, vec2);
+    t_matrix_3x3 rotate_mat_2_oz = ft_mat_transpose(&rotate_mat_2_oz_transpose);
 
-    t_matrix_3x3 rotate_matrix_xy = ft_mat_mul(&rotate_matrix_y, &rotate_matrix_x);
-    t_matrix_3x3 rotate_matrix_xyz = ft_mat_mul(&rotate_matrix_z, &rotate_matrix_xy);
+    // Rotation vec1_1 to OZ ray in YZ space
+    t_xy yz_vec2_1 = {vec2_1.y, vec2_1.z};
+    t_matrix_3x3 rotate_mat_2_ox_transpose = ft_xy_rotate_ox(
+            // Here, xy_OY is vertical ray in YZ space (OZ in XYZ space)
+            ft_xy_cos(&yz_vec2_1, &xy_OY),
+            ft_xy_sin(&yz_vec2_1, &xy_OY)
+    );
+    t_matrix_3x3 rotate_mat_2_ox = ft_mat_transpose(&rotate_mat_2_ox_transpose);
 
-//    t_xyz res1 = ft_mat_mul_xyz(&rotate_matrix_z, vec1);
-//    t_xyz res2 = ft_mat_mul_xyz(&rotate_matrix_z, &res1);
-//    t_xyz res3 = ft_mat_mul_xyz(&rotate_matrix_z, &res2);
-//    t_xyz res4 = ft_mat_mul_xyz(&rotate_matrix_xy, vec1);
-//    t_xyz res5 = ft_mat_mul_xyz(&rotate_matrix_xyz, vec1);
-//
-//    printf("rotate-1(x)\n");
-//    ft_mat_print(&rotate_matrix_x);
+    t_matrix_3x3 rotate_mat_1 = ft_mat_mul(&rotate_mat_1_ox, &rotate_mat_1_oz);
+    t_matrix_3x3 rotate_mat_2 = ft_mat_mul(&rotate_mat_2_oz, &rotate_mat_2_ox);
+    t_matrix_3x3 rotate_mat = ft_mat_mul(&rotate_mat_2, &rotate_mat_1);
+
+//    t_xyz res1 = ft_mat_mul_xyz(&rotate_mat_1_oz, vec1);
+//    t_xyz res2 = ft_mat_mul_xyz(&rotate_mat_1_ox, &res1);
+//    t_xyz res3 = ft_mat_mul_xyz(&rotate_mat_2_ox, &res2);
+//    t_xyz res4 = ft_mat_mul_xyz(&rotate_mat_2_oz, &res3);
+//    t_xyz res = ft_mat_mul_xyz(&rotate_mat, vec1);
+
+//    printf("Rotation to OYZ space in XYZ space\n");
+//    ft_mat_print(&rotate_mat_1_oz);
 //    ft_xyz_print(&res1);
-//    printf("rotate-2(xy)\n");
-//    ft_mat_print(&rotate_matrix_y);
+//    printf("Rotation to OZ ray in YZ space\n");
+//    ft_mat_print(&rotate_mat_1_ox);
 //    ft_xyz_print(&res2);
-//    printf("rotate-3(xyz)\n");
-//    ft_mat_print(&rotate_matrix_z);
+//    printf("Rotation from OZ ray in YZ space\n");
+//    ft_mat_print(&rotate_mat_2_ox);
 //    ft_xyz_print(&res3);
-//    printf("rotate-4(xy)\n");
-//    ft_mat_print(&rotate_matrix_xy);
+//    printf("Rotation from OYZ space in XYZ space\n");
+//    ft_mat_print(&rotate_mat_2_oz);
 //    ft_xyz_print(&res4);
-//    printf("rotate-5(xyz)\n");
-//    ft_mat_print(&rotate_matrix_xyz);
-//    ft_xyz_print(&res5);
+//    printf("Full rotation\n");
+//    ft_mat_print(&rotate_mat);
+//    ft_xyz_print(&res);
 
-    return rotate_matrix_xyz;
+    return rotate_mat;
 }

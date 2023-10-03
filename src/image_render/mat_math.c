@@ -47,3 +47,13 @@ t_matrix_3x3 ft_mat_mul(t_matrix_3x3 *mat1, t_matrix_3x3 *mat2) {
     };
     return (res);
 }
+
+t_matrix_3x3 ft_mat_transpose(t_matrix_3x3 *mat) {
+    return (t_matrix_3x3) {
+            {
+                    {mat->matrix_3x3[0][0], mat->matrix_3x3[1][0], mat->matrix_3x3[2][0]},
+                    {mat->matrix_3x3[0][1], mat->matrix_3x3[1][1], mat->matrix_3x3[2][1]},
+                    {mat->matrix_3x3[0][2], mat->matrix_3x3[1][2], mat->matrix_3x3[2][2]}
+            }
+    };
+}

@@ -141,7 +141,7 @@ void draw_ball(t_rt **rt) {
     t_xyz O = (*rt)->scene->camera.coord;
     t_xyz V = {0.0, 0.0, 1.0};
     t_xyz camV = (*rt)->scene->camera.vector;
-    t_matrix_3x3 rotate = ft_rotate(&V, &camV);
+    t_matrix_3x3 rotate = ft_xyz_rotate(&V, &camV);
     int fov = (*rt)->scene->camera.fov;
     for (int Sx = 0; Sx < Cw; Sx++) {
         for (int Sy = 0; Sy < Ch; Sy++) {
