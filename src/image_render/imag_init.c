@@ -72,7 +72,7 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V) {
 
 
 int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t2) {
-    t_xyz * C = &sphere->coord;
+    t_xyz *C = &sphere->coord;
     float r = sphere->r;
     t_xyz OC = ft_xyz_minus(O, C);
 
@@ -139,16 +139,14 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 
 void draw_ball(t_rt **rt) {
     t_xyz O = (*rt)->scene->camera.coord;
-    t_xyz V = {0.0, 0.0, 1.0};
-    t_xyz camV = (*rt)->scene->camera.vector;
-    t_matrix_3x3 rotate = ft_xyz_rotate(&V, &camV);
+    t_matrix_3x3 rotation = (*rt)->scene->camera.rotation;
     int fov = (*rt)->scene->camera.fov;
     for (int Sx = 0; Sx < Cw; Sx++) {
         for (int Sy = 0; Sy < Ch; Sy++) {
             int Cx = Sx - Cw / 2;
             int Cy = Ch / 2 - Sy;
-			t_xyz CanToV = CanvasToViewport(Cx, Cy, fov);
-            t_xyz D = ft_mat_mul_xyz(&rotate, &CanToV);
+            t_xyz CanToV = CanvasToViewport(Cx, Cy, fov);
+            t_xyz D = ft_mat_mul_xyz(&rotation, &CanToV);
             t_color color = TraceRay(rt, &O, &D);
             uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
             mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);
@@ -156,12 +154,43 @@ void draw_ball(t_rt **rt) {
     }
 }
 
-void ft_hook(void *param) {
-    t_rt **rt;
+void ft_process_camera_movement(t_rt **rt) {
+    t_xyz move_direction;
+    float move_value = 1;
 
-    rt = (t_rt **) param;
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_W))
+        move_direction.z = move_value;
+    else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_S))
+        move_direction.z = -move_value;
+    else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_D))
+        move_direction.x = move_value;
+    else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_A))
+        move_direction.x = -move_value;
+    else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_SPACE))
+        move_direction.y = move_value;
+    else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_LEFT_SHIFT))
+        move_direction.y = -move_value;
+    else
+        return;
+
+    t_xyz position = (*rt)->scene->camera.coord;
+    t_matrix_3x3 rotation = (*rt)->scene->camera.rotation;
+    t_xyz rotated_move_direction = ft_mat_mul_xyz(&rotation, &move_direction);
+    (*rt)->scene->camera.coord = ft_xyz_plus(&position, &rotated_move_direction);
+
+//    printf("Move\n");
+//    ft_xyz_print(&position);
+//    ft_xyz_print(&((*rt)->scene->camera.coord));
+//    ft_xyz_print(&move_direction);
+//    ft_xyz_print(&rotated_move_direction);
+//    ft_xyz_print(&rotated_move_direction);
+//    ft_mat_print(&rotation);
+}
+
+void process_keys(t_rt **rt) {
     if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_ESCAPE))
         mlx_close_window((*rt)->window->mlx);
+
     if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_UP))
         (*rt)->window->img->instances[0].y -= 5;
     if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_DOWN))
@@ -170,19 +199,14 @@ void ft_hook(void *param) {
         (*rt)->window->img->instances[0].x -= 5;
     if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_RIGHT))
         (*rt)->window->img->instances[0].x += 5;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_W))
-        (*rt)->scene->camera.coord.z += 1;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_S))
-        (*rt)->scene->camera.coord.z -= 1;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_D))
-        (*rt)->scene->camera.coord.x += 1;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_A))
-        (*rt)->scene->camera.coord.x -= 1;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_SPACE))
-        (*rt)->scene->camera.coord.y += 1;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_LEFT_SHIFT))
-        (*rt)->scene->camera.coord.y -= 1;
 
+    ft_process_camera_movement(rt);
+}
+
+void ft_hook(void *param) {
+    t_rt **rt = (t_rt **) param;
+
+    process_keys(rt);
     draw_ball(rt);
 }
 
@@ -203,7 +227,6 @@ int ft_imag_init(t_rt **rt) {
         return (ft_error("img error"));
     }
     mlx_loop_hook((*rt)->window->mlx, ft_hook, rt);
-    //ft_camera_orient(rt);
 //    mlx_key_hook((*rt)->window->mlx, ft_key_callback, rt);
     mlx_loop((*rt)->window->mlx);
     return (TRUE);

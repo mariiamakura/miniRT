@@ -44,10 +44,11 @@ int	ft_ambient_light_parse(char *line, t_rt **rt)
 int ft_camera_parse(char *line, t_rt **rt)
 {
 	t_camera camera;
+    float fov;
+    t_xyz coord;
+    t_xyz vector;
 	char **tab;
-	//int i;
 
-	//i = 0;
 	if ((*rt)->scene->camera.id)
 		return (ft_error("More then 1 camera"));
 	tab = ft_split(line, ' ');
@@ -59,15 +60,19 @@ int ft_camera_parse(char *line, t_rt **rt)
 		return (ft_error("C: wrong number of arguments"));
 	}
 	ft_bzero(&camera, sizeof(t_camera));
-	camera.id = "C";
-	if (!ft_parse_coord(tab[1], &camera.coord) || !ft_parse_vectors(tab[2], &camera.vector)
-			|| !ft_parse_fov(tab[3], &camera.fov))
+	if (!ft_parse_coord(tab[1], &coord) || !ft_parse_vectors(tab[2], &vector) || !ft_parse_fov(tab[3], &fov))
 	{
 		ft_free_2d_arr(tab);
 		return (ft_error("C: not valid format"));
 	}
-	(*rt)->scene->camera = camera; 
-	ft_free_2d_arr(tab);
+
+    camera.id = "C";
+    camera.fov = fov;
+    camera.coord = coord;
+    t_xyz V = {0.0, 0.0, 1.0};
+    camera.rotation = ft_xyz_rotate(&V, &vector);
+	(*rt)->scene->camera = camera;
+    ft_free_2d_arr(tab);
 	return (TRUE);
 }
 

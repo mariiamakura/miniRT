@@ -54,17 +54,14 @@ void ft_print_all(t_rt *rt)
 	printf("color g %i\n", rt->scene->ambient.color.g);
 	printf("color b %i\n", rt->scene->ambient.color.b);
 	printf("-----camera-------\n");
-	printf("coord x %f \n", rt->scene->camera.coord.x);
-	printf("coord y %f \n", rt->scene->camera.coord.y);
-	printf("coord z %f \n", rt->scene->camera.coord.z);
-	printf("vec x %f \n", rt->scene->camera.vector.x);
-	printf("vec y %f \n", rt->scene->camera.vector.y);
-	printf("vec z %f \n", rt->scene->camera.vector.z);
+    printf("coord ");
+    ft_xyz_print(&(rt->scene->camera.coord));
+    printf("rotation\n");
+    ft_mat_print(&(rt->scene->camera.rotation));
 	printf("fov %f \n", rt->scene->camera.fov);
 	printf("-----light-------\n");
-	printf("coord x %f \n", rt->scene->light.coord.x);
-	printf("coord y %f \n", rt->scene->light.coord.y);
-	printf("coord z %f \n", rt->scene->light.coord.z);
+    printf("coord ");
+    ft_xyz_print(&(rt->scene->light.coord));
 	printf("ratio %f \n", rt->scene->light.ratio);
 	t_objects *cur = rt->scene->objs;
 	while (cur)

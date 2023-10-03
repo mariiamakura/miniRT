@@ -28,13 +28,13 @@ int	main(int ac, char **av)
 		ft_free_rt(rt);
 		return (-1);
 	}
+//    ft_print_all(rt);
 	if (!ft_imag_init(&rt))
 	{
 		ft_free_rt(rt);
 		return (-1);
 	}
 	mlx_terminate(rt->window->mlx);
-	ft_print_all(rt);
 	ft_free_rt(rt);
 	return (0);
 }
