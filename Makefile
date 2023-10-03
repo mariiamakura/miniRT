@@ -39,5 +39,8 @@ fclean: clean
 
 re: clean all
 
+run: all
+	./$(NAME)
+
 .PHONY: all, clean, fclean, re, libmlx
 

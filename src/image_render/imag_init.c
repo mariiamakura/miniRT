@@ -43,28 +43,28 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V) {
         i += amb.ratio; //ambient included to the color intencity
     }
 
-    t_xyz L = ft_minus(&light_point.coord, P);
+    t_xyz L = ft_xyz_minus(&light_point.coord, P);
 
     t_sphere *shadow_sphere = NULL;
     ClosestIntersection(rt, P, &L, &shadow_sphere, 0.001);
     if (shadow_sphere != NULL)
         return (i);
 
-    float n_dot_l = ft_dot(N, &L);
+    float n_dot_l = ft_xyz_dot(N, &L);
     if (n_dot_l > 0) {
-        i += light_point.ratio * n_dot_l / (ft_vec_lenght(N) * ft_vec_lenght(&L));
+        i += light_point.ratio * n_dot_l / (ft_xyz_length(N) * ft_xyz_length(&L));
 
     }
 
     //spectacular light
-    t_xyz v_2N = ft_vec_mult_float(N, 2.0);
-    float dot_NL = ft_dot(N, &L);
-    t_xyz a = ft_vec_mult_float(&v_2N, dot_NL);
-    t_xyz R = ft_minus(&a, &L);
-    float r_dot_v = ft_dot(&R, V);
+    t_xyz v_2N = ft_xyz_mul_num(N, 2.0);
+    float dot_NL = ft_xyz_dot(N, &L);
+    t_xyz a = ft_xyz_mul_num(&v_2N, dot_NL);
+    t_xyz R = ft_xyz_minus(&a, &L);
+    float r_dot_v = ft_xyz_dot(&R, V);
 
     if (r_dot_v > 0) {
-        float b = r_dot_v / (ft_vec_lenght(&R) * ft_vec_lenght(V));
+        float b = r_dot_v / (ft_xyz_length(&R) * ft_xyz_length(V));
         i += light_point.ratio * powf(b, s);
     }
     return (i);
@@ -74,11 +74,11 @@ float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V) {
 int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t2) {
     t_xyz * C = &sphere->coord;
     float r = sphere->r;
-    t_xyz OC = ft_minus(O, C);
+    t_xyz OC = ft_xyz_minus(O, C);
 
-    float k1 = ft_dot(D, D);
-    float k2 = 2 * ft_dot(&OC, D);
-    float k3 = ft_dot(&OC, &OC) - r * r;
+    float k1 = ft_xyz_dot(D, D);
+    float k2 = 2 * ft_xyz_dot(&OC, D);
+    float k3 = ft_xyz_dot(&OC, &OC) - r * r;
 
     float discriminant = k2 * k2 - 4 * k1 * k3;
     if (discriminant < 0) {
@@ -126,11 +126,11 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
     } else {
         //printf("closest sphere %i %i\n", closest_sphere->color.r, closest_sphere->color.g);
         t_xyz P = ft_get_intersec(O, closest_t, D);   //intersec point of sphere
-        t_xyz N = ft_minus(&P, &closest_sphere->coord);// Compute sphere normal at intersection
-        N = ft_normalize(&N);
+        t_xyz N = ft_xyz_minus(&P, &closest_sphere->coord);// Compute sphere normal at intersection
+        N = ft_xyz_normalize(&N);
 
         //printf("%f %f %f\n", N.x, N.y, N.z);
-        t_xyz min_D = ft_unary_minus(D);
+        t_xyz min_D = ft_xyz_unary_minus(D);
         float i = ComputeLighting(&P, &N, rt, &min_D);
         fin_color = ft_set_fin_color(&closest_sphere->color, i);
         return fin_color;
@@ -148,8 +148,7 @@ void draw_ball(t_rt **rt) {
             int Cx = Sx - Cw / 2;
             int Cy = Ch / 2 - Sy;
 			t_xyz CanToV = CanvasToViewport(Cx, Cy, fov);
-            t_xyz D = ft_mul_mat_xyz(&rotate, &CanToV);
-//            t_xyz D = ft_mul_xyz_mat(&CanToV, &rotate);
+            t_xyz D = ft_mat_mul_xyz(&rotate, &CanToV);
             t_color color = TraceRay(rt, &O, &D);
             uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
             mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);
