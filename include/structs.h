@@ -89,6 +89,7 @@ typedef struct s_objects
 	int	i;
 	enum e_figure	type;
 	union u_figures	fig;
+	int cap;  // 0 for no cap, 1 for bottom cap, 2 for top cap
 	struct s_objects *next;
 } t_objects;
 

@@ -230,12 +230,14 @@ float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_objects **closest_obj
 			if (IntersectRayCap(O, D, cylinder, &tCap1, FALSE) && tCap1 > t_min && tCap1 < closest_t) {
 				closest_t = tCap1;
 				*closest_object = object;
+				object->cap = 1;  // Indicate that the intersection is with the bottom cap
 			}
 
 			// Check intersection with the top cap
 			if (IntersectRayCap(O, D, cylinder, &tCap2, TRUE) && tCap2 > t_min && tCap2 < closest_t) {
 				closest_t = tCap2;
 				*closest_object = object;
+				object->cap = 2;  // Indicate that the intersection is with the top cap
 			}
 		}
 
@@ -268,13 +270,21 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 			color = closest_object->fig.pl.color;
 		}
 		else if (closest_object->type == CYLINDER) {
-			t_cylinder *cylinder = &closest_object->fig.cy;
-			t_xyz temp = ft_vec_mult_float(&cylinder->vector, ft_dot(&N, &cylinder->vector));
-			N.x = N.x - temp.x;
-			N.y = N.y - temp.y;
-			N.z = N.z - temp.z;
-			N = ft_normalize(&N);
-			color = cylinder->color;
+			if (closest_object->cap == 1 || closest_object->cap == 2) {
+				// Calculate the normal for the cap
+				N = closest_object->cap == 2 ? closest_object->fig.cy.vector : ft_unary_minus(&closest_object->fig.cy.vector);
+				N = ft_normalize(&N);
+				// Use the color of the cylinder for the cap
+				color = closest_object->fig.cy.color;
+			} else {
+				t_cylinder *cylinder = &closest_object->fig.cy;
+				t_xyz temp = ft_vec_mult_float(&cylinder->vector, ft_dot(&N, &cylinder->vector));
+				N.x = N.x - temp.x;
+				N.y = N.y - temp.y;
+				N.z = N.z - temp.z;
+				N = ft_normalize(&N);
+				color = cylinder->color;
+			}
 		}
 		t_xyz min_D = ft_unary_minus(D);
 		float i = ComputeLighting(&P, &N, rt, &min_D);
