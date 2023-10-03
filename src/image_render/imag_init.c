@@ -104,6 +104,34 @@ int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
 	return TRUE;
 }
 
+int PointInsideCap(t_xyz *P, t_cylinder *cylinder) {
+	t_xyz v = ft_minus(P, &cylinder->coord);
+	return ft_dot(&v, &v) <= (cylinder->diameter / 2) * (cylinder->diameter / 2);
+}
+
+int IntersectRayCap(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t, int isTopCap) {
+	t_xyz temp = ft_vec_mult_float(&cylinder->vector, cylinder->height);
+	t_xyz capCenter = isTopCap ? ft_plus(&cylinder->coord, &temp) : cylinder->coord; // Fixed this line
+	t_xyz normal = isTopCap ? cylinder->vector : ft_unary_minus(&cylinder->vector);
+
+	float denominator = ft_dot(D, &normal);
+	if (fabs(denominator) < 0.0001f) {
+		return FALSE;
+	}
+
+	t_xyz OC = ft_minus(O, &capCenter);
+	*t = -ft_dot(&OC, &normal) / denominator;
+
+	if (*t < 0.0f) {
+		return FALSE;
+	}
+
+	t_xyz P = ft_get_intersec(O, *t, D);
+	return PointInsideCap(&P, cylinder);
+}
+
+
+
 int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1, float *t2) {
 	t_xyz OC = ft_minus(O, &cylinder->coord);
 	t_xyz V = ft_normalize(&cylinder->vector);
@@ -190,9 +218,23 @@ float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_objects **closest_obj
 		}
 		else if (object->type == CYLINDER) {
 			t_cylinder *cylinder = &(object->fig.cy);
-			float t1, t2;
+			float t1, t2, tCap1, tCap2;
+
+			// Check intersection with the cylinder body
 			if (IntersectRayCylinder(O, D, cylinder, &t1, &t2) && ((t1 > t_min && t1 < closest_t) || (t2 > t_min && t2 < closest_t))) {
 				closest_t = t1 > t_min && t1 < closest_t ? t1 : t2;
+				*closest_object = object;
+			}
+
+			// Check intersection with the bottom cap
+			if (IntersectRayCap(O, D, cylinder, &tCap1, FALSE) && tCap1 > t_min && tCap1 < closest_t) {
+				closest_t = tCap1;
+				*closest_object = object;
+			}
+
+			// Check intersection with the top cap
+			if (IntersectRayCap(O, D, cylinder, &tCap2, TRUE) && tCap2 > t_min && tCap2 < closest_t) {
+				closest_t = tCap2;
 				*closest_object = object;
 			}
 		}
