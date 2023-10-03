@@ -154,6 +154,47 @@ void draw_ball(t_rt **rt) {
     }
 }
 
+void ft_process_camera_rotation(t_rt **rt) {
+    float rotation_value = M_PI / 2 / 10;
+    t_matrix_3x3 additional_rotation;
+
+    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_8))
+        additional_rotation = ft_xy_rotate_ox(
+                cosf(rotation_value),
+                sinf(rotation_value)
+        );
+    else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_2))
+        additional_rotation = ft_xy_rotate_ox(
+                cosf(-rotation_value),
+                sinf(-rotation_value)
+        );
+    else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_4))
+        additional_rotation = ft_xy_rotate_oy(
+                cosf(-rotation_value),
+                sinf(-rotation_value)
+        );
+    else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_6))
+        additional_rotation = ft_xy_rotate_oy(
+                cosf(rotation_value),
+                sinf(rotation_value)
+        );
+    else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_7))
+        additional_rotation = ft_xy_rotate_oz(
+                cosf(rotation_value),
+                sinf(rotation_value)
+        );
+    else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_9))
+        additional_rotation = ft_xy_rotate_oz(
+                cosf(-rotation_value),
+                sinf(-rotation_value)
+        );
+    else
+        return;
+
+    t_matrix_3x3 rotation = (*rt)->scene->camera.rotation;
+    (*rt)->scene->camera.rotation = ft_mat_mul(&rotation, &additional_rotation);
+}
+
 void ft_process_camera_movement(t_rt **rt) {
     t_xyz move_direction;
     float move_value = 1;
@@ -177,14 +218,6 @@ void ft_process_camera_movement(t_rt **rt) {
     t_matrix_3x3 rotation = (*rt)->scene->camera.rotation;
     t_xyz rotated_move_direction = ft_mat_mul_xyz(&rotation, &move_direction);
     (*rt)->scene->camera.coord = ft_xyz_plus(&position, &rotated_move_direction);
-
-//    printf("Move\n");
-//    ft_xyz_print(&position);
-//    ft_xyz_print(&((*rt)->scene->camera.coord));
-//    ft_xyz_print(&move_direction);
-//    ft_xyz_print(&rotated_move_direction);
-//    ft_xyz_print(&rotated_move_direction);
-//    ft_mat_print(&rotation);
 }
 
 void process_keys(t_rt **rt) {
@@ -200,6 +233,7 @@ void process_keys(t_rt **rt) {
     if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_RIGHT))
         (*rt)->window->img->instances[0].x += 5;
 
+    ft_process_camera_rotation(rt);
     ft_process_camera_movement(rt);
 }
 
