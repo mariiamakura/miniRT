@@ -57,7 +57,6 @@ t_matrix_3x3 ft_xyz_rotate(t_xyz *vec1, t_xyz *vec2) {
             ft_xy_sin(&xy_vec2, &xy_OY)
     );
     t_xyz vec2_1 = ft_mat_mul_xyz(&rotate_mat_2_oz_transpose, vec2);
-    t_matrix_3x3 rotate_mat_2_oz = ft_mat_transpose(&rotate_mat_2_oz_transpose);
 
     // Rotation vec1_1 to OZ ray in YZ space
     t_xy yz_vec2_1 = {vec2_1.y, vec2_1.z};
@@ -66,10 +65,13 @@ t_matrix_3x3 ft_xyz_rotate(t_xyz *vec1, t_xyz *vec2) {
             ft_xy_cos(&yz_vec2_1, &xy_OY),
             ft_xy_sin(&yz_vec2_1, &xy_OY)
     );
+
+    // the return matrix for vec2 from OZ ray to XYZ space
+    t_matrix_3x3 rotate_mat_2_oz = ft_mat_transpose(&rotate_mat_2_oz_transpose);
     t_matrix_3x3 rotate_mat_2_ox = ft_mat_transpose(&rotate_mat_2_ox_transpose);
 
-    t_matrix_3x3 rotate_mat_1 = ft_mat_mul(&rotate_mat_1_ox, &rotate_mat_1_oz);
-    t_matrix_3x3 rotate_mat_2 = ft_mat_mul(&rotate_mat_2_oz, &rotate_mat_2_ox);
+    t_matrix_3x3 rotate_mat_1 = ft_mat_mul(&rotate_mat_1_ox, &rotate_mat_1_oz); //from vec1
+    t_matrix_3x3 rotate_mat_2 = ft_mat_mul(&rotate_mat_2_oz, &rotate_mat_2_ox); //to vec2
     t_matrix_3x3 rotate_mat = ft_mat_mul(&rotate_mat_2, &rotate_mat_1);
 
 //    t_xyz res1 = ft_mat_mul_xyz(&rotate_mat_1_oz, vec1);
