@@ -102,10 +102,12 @@ t_matrix_3x3 ft_mat_mul(t_matrix_3x3 *mat1, t_matrix_3x3 *mat2);
 t_matrix_3x3 ft_mat_transpose(t_matrix_3x3 *mat);
 
 //math.c
+t_matrix_3x3 ft_xyz_rotate(t_xyz *vec1, t_xyz *vec2);
+
+//2d_rotate.c
 t_matrix_3x3 ft_xy_rotate_ox(float cos_x, float sin_x);
 t_matrix_3x3 ft_xy_rotate_oy(float cos_y, float sin_y);
 t_matrix_3x3 ft_xy_rotate_oz(float cos_z, float sin_z);
-t_matrix_3x3 ft_xyz_rotate(t_xyz *vec1, t_xyz *vec2);
 
 
 //struct_init_image.c
