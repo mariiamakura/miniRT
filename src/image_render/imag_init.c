@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/04 16:02:49 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/04 16:19:17 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,23 +137,28 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
     }
 }
 
-void draw_ball(t_rt **rt) {
-    t_xyz O = (*rt)->scene->camera.coord;
-    t_xyz V = {0.0, 0.0, 1.0};
-    t_xyz camV = (*rt)->scene->camera.vector;
-    t_matrix_3x3 rotate = ft_xyz_rotate(&V, &camV);
-    int fov = (*rt)->scene->camera.fov;
-    for (int Sx = 0; Sx < Cw; Sx++) {
-        for (int Sy = 0; Sy < Ch; Sy++) {
-            int Cx = Sx - Cw / 2;
-            int Cy = Ch / 2 - Sy;
-            t_xyz CanToV = CanvasToViewport(Cx, Cy, fov);
-            t_xyz D = ft_mat_mul_xyz(&rotate, &CanToV);
-            t_color color = TraceRay(rt, &O, &D);
-            uint32_t fin_color = ft_pixel(color.r, color.g, color.b, 255);
-            mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);
-        }
-    }
+void render_scene(t_rt **rt)
+{
+	t_xyz O;
+	t_xyz V;
+	t_xyz camV;
+	t_matrix_3x3 rotate;
+
+	O = (*rt)->scene->camera.coord;
+	V = ft_V_init();
+	camV = (*rt)->scene->camera.vector;
+	rotate = ft_xyz_rotate(&V, &camV);
+	for (int Sx = 0; Sx < Cw; Sx++) {
+		for (int Sy = 0; Sy < Ch; Sy++) {
+			int Cx = Sx - Cw / 2;
+			int Cy = Ch / 2 - Sy;
+			t_xyz CanToV = CanvasToViewport(Cx, Cy, (*rt)->scene->camera.fov);
+			t_xyz D = ft_mat_mul_xyz(&rotate, &CanToV);
+			t_color color = TraceRay(rt, &O, &D);
+			int fin_color = ft_pixel(color.r, color.g, color.b, 255);
+			mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);
+		}
+	}
 }
 
 void	ft_hook(void *param)
@@ -185,7 +190,7 @@ int	ft_imag_init(t_rt **rt)
 		return (ft_error("img error"));
 	}
 	mlx_loop_hook((*rt)->window->mlx, ft_hook, rt);
-	draw_ball(rt);
+	render_scene(rt);
 	mlx_loop((*rt)->window->mlx);
 	return (TRUE);
 }

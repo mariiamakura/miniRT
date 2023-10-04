@@ -107,4 +107,7 @@ t_matrix_3x3 ft_xy_rotate_oy(float cos_y, float sin_y);
 t_matrix_3x3 ft_xy_rotate_oz(float cos_z, float sin_z);
 t_matrix_3x3 ft_xyz_rotate(t_xyz *vec1, t_xyz *vec2);
 
+
+//struct_init_image.c
+t_xyz ft_V_init(void);
 #endif
