@@ -36,13 +36,14 @@ typedef struct	s_ambient
 	t_color	color;
 } t_ambient;
 
+
 typedef struct	s_camera
 {
-	char	*id;
-	float	fov;
-	//t_color	color;
-	t_xyz	coord;
-    t_matrix_3x3 rotation;
+    char	*id;
+    float	fov;
+    //t_color	color;
+    t_xyz	coord;
+    t_xyz	vector; //vector
 } t_camera;
 
 typedef struct s_light 
