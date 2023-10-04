@@ -1,5 +1,5 @@
 
-#include "../../include/miniRT.h"
+#include "../../../include/miniRT.h"
 
 void ft_xy_print(t_xy *vec) {
     printf("vec %f %f\n", vec->x, vec->y);

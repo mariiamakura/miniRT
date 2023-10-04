@@ -1,5 +1,5 @@
 
-#include "../../include/miniRT.h"
+#include "../../../include/miniRT.h"
 
 void ft_mat_print(t_matrix_3x3 *mat) {
     for (int i = 0; i < 3; i++) {

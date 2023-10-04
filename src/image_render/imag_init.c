@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/02 16:16:20 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/04 16:02:49 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,55 +156,36 @@ void draw_ball(t_rt **rt) {
     }
 }
 
-void ft_hook(void *param) {
-    t_rt **rt;
+void	ft_hook(void *param)
+{
+	t_rt **rt;
 
-    rt = (t_rt **) param;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_ESCAPE))
-        mlx_close_window((*rt)->window->mlx);
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_UP))
-        (*rt)->window->img->instances[0].y -= 5;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_DOWN))
-        (*rt)->window->img->instances[0].y += 5;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_LEFT))
-        (*rt)->window->img->instances[0].x -= 5;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_RIGHT))
-        (*rt)->window->img->instances[0].x += 5;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_W))
-        (*rt)->scene->camera.coord.z += 1;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_S))
-        (*rt)->scene->camera.coord.z -= 1;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_D))
-        (*rt)->scene->camera.coord.x += 1;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_A))
-        (*rt)->scene->camera.coord.x -= 1;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_SPACE))
-        (*rt)->scene->camera.coord.y += 1;
-    if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_LEFT_SHIFT))
-        (*rt)->scene->camera.coord.y -= 1;
-
-    draw_ball(rt);
+	rt = (t_rt **) param;
+	if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_ESCAPE))
+		mlx_close_window((*rt)->window->mlx);
 }
 
-int ft_imag_init(t_rt **rt) {
-    (*rt)->window = malloc(sizeof(t_window));
-    if (!(*rt)->window)
-        return (ft_error("mlx error"));
-    (*rt)->window->mlx = mlx_init(Cw, Ch, "miniRT", true);
-    if (!(*rt)->window->mlx)
-        return (ft_error("mlx error"));
-    (*rt)->window->img = mlx_new_image((*rt)->window->mlx, Cw, Ch);
-    if (!(*rt)->window->img) {
-        mlx_close_window((*rt)->window->mlx);
-        return (ft_error("img error"));
-    }
-    if (mlx_image_to_window((*rt)->window->mlx, (*rt)->window->img, 0, 0) == -1) {
-        mlx_close_window((*rt)->window->mlx);
-        return (ft_error("img error"));
-    }
-    mlx_loop_hook((*rt)->window->mlx, ft_hook, rt);
-    //ft_camera_orient(rt);
-//    mlx_key_hook((*rt)->window->mlx, ft_key_callback, rt);
-    mlx_loop((*rt)->window->mlx);
-    return (TRUE);
+int	ft_imag_init(t_rt **rt)
+{
+	(*rt)->window = malloc(sizeof(t_window));
+	if (!(*rt)->window)
+		return (ft_error("mlx error"));
+	(*rt)->window->mlx = mlx_init(Cw, Ch, "miniRT", true);
+	if (!(*rt)->window->mlx)
+		return (ft_error("mlx error"));
+	(*rt)->window->img = mlx_new_image((*rt)->window->mlx, Cw, Ch);
+	if (!(*rt)->window->img)
+	{
+		mlx_close_window((*rt)->window->mlx);
+		return (ft_error("img error"));
+	}
+	if (mlx_image_to_window((*rt)->window->mlx, (*rt)->window->img, 0, 0) == -1)
+	{
+		mlx_close_window((*rt)->window->mlx);
+		return (ft_error("img error"));
+	}
+	mlx_loop_hook((*rt)->window->mlx, ft_hook, rt);
+	draw_ball(rt);
+	mlx_loop((*rt)->window->mlx);
+	return (TRUE);
 }

@@ -1,5 +1,5 @@
 
-#include "../../include/miniRT.h"
+#include "../../../include/miniRT.h"
 
 t_matrix_3x3 ft_xy_rotate_ox(float cos_x, float sin_x) {
     return (t_matrix_3x3) {
