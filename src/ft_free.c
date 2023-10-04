@@ -6,16 +6,19 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 15:53:23 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/25 15:03:36 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/04 14:38:24 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
 
-static void ft_free_objects(t_objects *objs)
+static void	ft_free_objects(t_objects *objs)
 {
-	t_objects *cur = objs;
-	t_objects *next = NULL;
+	t_objects	*cur;
+	t_objects	*next;
+
+	cur = objs;
+	next = NULL;
 	while (cur != NULL)
 	{
 		next = cur->next;
@@ -24,27 +27,27 @@ static void ft_free_objects(t_objects *objs)
 	}
 }
 
-
-void ft_free_rt(t_rt *rt)
+void	ft_free_rt(t_rt *rt)
 {
-    if (rt)
-    {
-		if (rt->scene->objs)
-			ft_free_objects(rt->scene->objs);
-        if (rt->scene)
-        {
-            free(rt->scene);
-        }
-		if (rt->window)
+	if (rt != NULL)
+	{
+		if (rt->scene != NULL)
 		{
-			//free(rt->window->mlx);
-			//free(rt->window->img);
+			if (rt->scene->objs != NULL)
+			{
+				ft_free_objects(rt->scene->objs);
+			}
+			free(rt->scene);
+		}
+		if (rt->window != NULL)
+		{
 			free(rt->window);
 		}
-        free(rt);
-    }
+		free(rt);
+	}
 }
 
+/* 
 void ft_print_all(t_rt *rt)
 {
     printf("-----ambient-------\n");
@@ -113,5 +116,4 @@ void ft_print_all(t_rt *rt)
         }
         cur = cur->next;
     }
-
-}
+} */

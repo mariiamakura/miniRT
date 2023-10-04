@@ -6,16 +6,16 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 12:50:17 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/25 11:54:11 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/04 14:39:40 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/miniRT.h"
 
-int ft_parse(char *file, t_rt **rt)
+int	ft_parse(char *file, t_rt **rt)
 {
-	int index;
-	int fd;
+	int	index;
+	int	fd;
 
 	index = 0;
 	if (!ft_file_validation(file))
@@ -23,7 +23,7 @@ int ft_parse(char *file, t_rt **rt)
 	if (!ft_init_parse_rt(rt))
 		return (FALSE);
 	fd = open(file, O_RDONLY);
-	if(!ft_fill_structs(fd, rt, index))
+	if (!ft_fill_structs(fd, rt, index))
 	{
 		close (fd);
 		return (FALSE);
@@ -32,37 +32,44 @@ int ft_parse(char *file, t_rt **rt)
 	return (TRUE);
 }
 
+static int	ft_process_line(char *line, t_rt **rt, int *index)
+{
+	if (ft_strncmp(line, "A ", 2) == 0)
+	{
+		if (!ft_ambient_light_parse(line, rt))
+			return (TRUE);
+	}
+	else if (ft_strncmp(line, "C ", 2) == 0)
+	{
+		if (!ft_camera_parse(line, rt))
+			return (TRUE);
+	}
+	else if (ft_strncmp(line, "L ", 2) == 0)
+	{
+		if (!ft_light_parse(line, rt))
+			return (TRUE);
+	}
+	else if (ft_strncmp(line, "pl ", 2) == 0 
+		|| ft_strncmp(line, "sp ", 2) == 0
+		|| ft_strncmp(line, "cy ", 2) == 0)
+	{
+		if (!ft_parse_objects(line, rt, *index))
+			return (TRUE);
+		(*index)++;
+	}
+	return (FALSE);
+}
+
 int	ft_fill_structs(int fd, t_rt **rt, int index)
 {
-	char *line;
-	int error_flag;
+	char	*line;
+	int		error_flag;
 
 	line = get_next_line(fd);
 	error_flag = FALSE;
 	while (line)
 	{
-		if (ft_strncmp(line, "A ", 2) == 0)
-		{
-			if (!ft_ambient_light_parse(line, rt))
-				error_flag = TRUE;
-		}
-		else if (ft_strncmp(line, "C ", 2) == 0)
-		{
-			if (!ft_camera_parse(line, rt))
-				error_flag = TRUE;
-		}
-		else if (ft_strncmp(line, "L ", 2) == 0)
-		{
-			if (!ft_light_parse(line, rt))
-				error_flag = TRUE;
-		}
-		else if (ft_strncmp(line, "pl ", 2) == 0 || ft_strncmp(line, "sp ", 2) == 0
-               || ft_strncmp(line, "cy ", 2) == 0)
-		{
-			if (!ft_parse_objects(line, rt, index))
-				error_flag = TRUE;
-			index++;
-		}
+		error_flag |= ft_process_line(line, rt, &index);
 		free (line);
 		line = get_next_line(fd);
 	}
@@ -74,8 +81,8 @@ int	ft_fill_structs(int fd, t_rt **rt, int index)
 
 int	ft_file_validation(char *file)
 {
-	char *file_str;
-	
+	char	*file_str;
+
 	if (ft_check_extention(file) == FALSE)
 		return (FALSE);
 	file_str = ft_file_to_str(file);
@@ -89,5 +96,3 @@ int	ft_file_validation(char *file)
 	free(file_str);
 	return (TRUE);
 }
-
-

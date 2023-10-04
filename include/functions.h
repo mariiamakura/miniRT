@@ -7,6 +7,7 @@
 int ft_file_validation(char *file);
 int ft_parse(char *file, t_rt **rt);
 int	ft_fill_structs(int fd, t_rt **rt, int index);
+/* static int	ft_process_line(char *line, t_rt **rt, int *index); */
 
 //parse_utils.c
 int ft_error(char *err_msg);
@@ -27,7 +28,6 @@ int ft_camera_parse(char *line, t_rt **rt);
 int ft_light_parse(char *line, t_rt **rt);
 
 //parse_ratio_color.c
-int ft_parse_ratio(char *str, float *ratio);
 int ft_is_float(char *str);
 float ft_str_to_float(char *str);
 int ft_parse_color(char *str, t_color *colors);
@@ -36,19 +36,25 @@ int is_color(char *str);
 //parse_coord_vec.c
 int ft_parse_coord(char *line, t_xyz *coord);
 int ft_parse_vectors(char *line, t_xyz *vectors);
-int ft_is_range(float num);
 int ft_parse_fov(char *line, float *fov);
 int ft_parse_num_var(char *line, float *num);
+/* static int	ft_vec_element(char *elm, t_xyz *vecs, int i); */
 
 //ft_manage_list.c
 t_objects *last_obj(t_objects *objs);
 void ft_add_obj(t_objects **objs, t_objects *new);
+int ft_is_range(float num);
+int ft_parse_ratio(char *str, float *ratio);
 
 //parse_objects.c
-int	ft_parse_objects(char *line, t_rt **rt, int index);
 int ft_sphere_parse(char *line, t_sphere *sp);
 int ft_parse_cylinder(char *line, t_cylinder *cy);
 int ft_plane_parse(char *line, t_plane *pl);
+
+//parse_objects_2.c
+int	ft_parse_objects(char *line, t_rt **rt, int index);
+int	parse_object_parameters(char *line, t_objects *new_obj);
+t_objects	*create_object(int type);
 
 //ft_free.c
 void ft_free_rt(t_rt *rt);

@@ -6,18 +6,18 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/06 12:44:52 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/06 13:15:07 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/04 14:42:19 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/miniRT.h"
 
-char *ft_file_to_str(char *file)
+char	*ft_file_to_str(char *file)
 {
-	int fd;
-	char *file_str;
-	char *line;
-	
+	int		fd;
+	char	*file_str;
+	char	*line;
+
 	fd = open(file, O_RDONLY);
 	if (fd < 0)
 	{
@@ -40,11 +40,11 @@ char *ft_file_to_str(char *file)
 	return (file_str);
 }
 
-int ft_check_extention(char *file)
+int	ft_check_extention(char *file)
 {
 	if (ft_str_ends_with(file, ".rt") != 0)
 	{
-		return(ft_error("Wrong extention"));
+		return (ft_error("Wrong extention"));
 	}
 	return (TRUE);
 }
