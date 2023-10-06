@@ -76,7 +76,7 @@ int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
 t_color ft_set_fin_color(t_color *origin, float i);
 
 //xy_math.c
-void ft_xy_print(t_xy *vec);
+t_xyz ft_assign_xyz(t_xy *v);
 float ft_xy_dot(t_xy *v1, t_xy *v2);
 t_xyz ft_xy_mul(t_xy *v1, t_xy *v2);
 float ft_xy_sin(t_xy *v1, t_xy *v2);
@@ -95,11 +95,10 @@ t_xyz ft_xyz_minus(t_xyz *v1, t_xyz *v2);
 t_xyz ft_xyz_normalize(t_xyz *vec);
 
 //mat_math.c
-void ft_mat_print(t_matrix_3x3 *mat);
-t_xyz ft_mat_mul_xyz(t_matrix_3x3 *mat, t_xyz *vec);
-t_xyz ft_xyz_mul_mat(t_xyz *vec, t_matrix_3x3 *mat);
-t_matrix_3x3 ft_mat_mul(t_matrix_3x3 *mat1, t_matrix_3x3 *mat2);
-t_matrix_3x3 ft_mat_trnsp(t_matrix_3x3 *mat);
+t_xyz	ft_mat_mul_xyz(t_matrix_3x3 *mat, t_xyz *vec);
+t_xyz	ft_xyz_mul_mat(t_xyz *vec, t_matrix_3x3 *mat);
+t_matrix_3x3	ft_mat_mul(t_matrix_3x3 *mat1, t_matrix_3x3 *mat2);
+t_matrix_3x3	ft_mat_trnsp(t_matrix_3x3 *mat);
 
 //math.c
 t_matrix_3x3 ft_xyz_rot(t_xyz *v1, t_xyz *v2);
@@ -112,6 +111,8 @@ t_xy	ft_create_xy(float x, float y);
 t_matrix_3x3 ft_xy_rot_ox(float cos_x, float sin_x);
 t_matrix_3x3 ft_xy_rot_oy(float cos_y, float sin_y);
 t_matrix_3x3 ft_xy_rot_oz(float cos_z, float sin_z);
+t_m_rows	ft_assign_m1_rows(t_matrix_3x3 *mat);
+t_m_rows	ft_assign_m2_rows(t_matrix_3x3 *mat);
 
 
 //struct_init_image.c

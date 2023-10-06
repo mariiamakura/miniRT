@@ -54,6 +54,14 @@ typedef struct s_all_m
 	t_matrix_3x3 rot_mat_2;
 } t_all_m;
 
+
+typedef struct s_m_rows
+{
+	 t_xyz row1;
+	 t_xyz row2;
+	 t_xyz row3;
+} t_m_rows;
+
 //ambiant light
 typedef struct	s_ambient
 {

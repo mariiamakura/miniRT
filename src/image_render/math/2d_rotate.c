@@ -59,3 +59,35 @@ t_matrix_3x3	ft_xy_rot_oz(float cos_z, float sin_z)
 	res.data[2][2] = 1;
 	return (res);
 }
+
+t_m_rows	ft_assign_m1_rows(t_matrix_3x3 *mat)
+{
+	t_m_rows	res;
+
+	res.row1.x = mat->data[0][0];
+	res.row1.y = mat->data[0][1];
+	res.row1.z = mat->data[0][2];
+	res.row2.x = mat->data[1][0];
+	res.row2.y = mat->data[1][1];
+	res.row2.z = mat->data[1][2];
+	res.row3.x = mat->data[2][0];
+	res.row3.y = mat->data[2][1];
+	res.row3.z = mat->data[2][2];
+	return (res);
+}
+
+t_m_rows	ft_assign_m2_rows(t_matrix_3x3 *mat)
+{
+	t_m_rows	res;
+
+	res.row1.x = mat->data[0][0];
+	res.row1.y = mat->data[1][0];
+	res.row1.z = mat->data[2][0];
+	res.row2.x = mat->data[0][1];
+	res.row2.y = mat->data[1][1];
+	res.row2.z = mat->data[2][1];
+	res.row3.x = mat->data[0][2];
+	res.row3.y = mat->data[1][2];
+	res.row3.z = mat->data[2][2];
+	return (res);
+}
