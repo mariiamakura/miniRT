@@ -83,16 +83,17 @@ float ft_xy_sin(t_xy *v1, t_xy *v2);
 float ft_xy_cos(t_xy *v1, t_xy *v2);
 
 //xyz_math.c
-void ft_xyz_print(t_xyz *vec);
 float ft_xyz_dot(t_xyz *v1, t_xyz *v2);
-float ft_xyz_length(t_xyz *vec);
-t_xyz ft_xyz_unary_minus(t_xyz *vec);
 t_xyz ft_xyz_mul(t_xyz *v1, t_xyz *v2);
 t_xyz ft_xyz_elm_mul(t_xyz *v1, t_xyz *v2);
 t_xyz ft_xyz_mul_num(t_xyz *vec, float i);
+t_xyz ft_xyz_normalize(t_xyz *vec);
+
+//xyz_plus_min.c
+float ft_xyz_length(t_xyz *vec);
+t_xyz ft_xyz_unary_minus(t_xyz *vec);
 t_xyz ft_xyz_plus(t_xyz *v1, t_xyz *v2);
 t_xyz ft_xyz_minus(t_xyz *v1, t_xyz *v2);
-t_xyz ft_xyz_normalize(t_xyz *vec);
 
 //mat_math.c
 t_xyz	ft_mat_mul_xyz(t_matrix_3x3 *mat, t_xyz *vec);
