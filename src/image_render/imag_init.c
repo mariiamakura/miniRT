@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/06 14:14:17 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/06 17:03:23 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,14 +140,10 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 void render_scene(t_rt **rt)
 {
 	t_xyz O;
-	t_xyz V;
-	t_xyz camV;
 	t_matrix_3x3 rot;
 
 	O = (*rt)->scene->camera.coord;
-	V = ft_V_init();
-	camV = (*rt)->scene->camera.vector;
-	rot = ft_xyz_rot(&V, &camV);
+	rot = (*rt)->scene->camera.rot;
 	for (int Sx = 0; Sx < Cw; Sx++) {
 		for (int Sy = 0; Sy < Ch; Sy++) {
 			int Cx = Sx - Cw / 2;
@@ -166,8 +162,10 @@ void	ft_hook(void *param)
 	t_rt **rt;
 
 	rt = (t_rt **) param;
-	if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_ESCAPE))
-		mlx_close_window((*rt)->window->mlx);
+	
+	ft_process_camera_movement(rt);
+	ft_process_camera_rotation(rt);
+	render_scene(rt);
 }
 
 int	ft_imag_init(t_rt **rt)
@@ -190,7 +188,6 @@ int	ft_imag_init(t_rt **rt)
 		return (ft_error("img error"));
 	}
 	mlx_loop_hook((*rt)->window->mlx, ft_hook, rt);
-	render_scene(rt);
 	mlx_loop((*rt)->window->mlx);
 	return (TRUE);
 }

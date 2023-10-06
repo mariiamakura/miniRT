@@ -75,9 +75,9 @@ typedef struct	s_camera
 {
     char	*id;
     float	fov;
-    //t_color	color;
     t_xyz	coord;
     t_xyz	vector; //vector
+	t_matrix_3x3 rot;
 } t_camera;
 
 typedef struct s_light 

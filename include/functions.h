@@ -68,6 +68,8 @@ float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D,t_sphere **closest_spher
 
 //camera.c
 void	ft_camera_orient(t_rt **rt);
+void ft_process_camera_movement(t_rt **rt);
+void ft_process_camera_rotation(t_rt **rt);
 
 //colors.c
 void ft_gradient(t_color *color, t_rt **rt);

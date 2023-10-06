@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/06 14:56:54 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/04 14:45:18 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/06 16:50:55 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,26 +44,25 @@ int	ft_camera_parse(char *line, t_rt **rt)
 {
 	t_camera	camera;
 	char		**tab;
+	t_xyz		v;
 
 	if ((*rt)->scene->camera.id)
 		return (ft_error("More then 1 camera"));
 	tab = ft_split(line, ' ');
 	if (!tab)
 		return (ft_error("Camera malloc failed"));
-	if (ft_count_arr_elements(tab) != 4)
-	{
-		ft_free_2d_arr(tab);
-		return (ft_error("C: wrong number of arguments"));
-	}
 	ft_bzero(&camera, sizeof(t_camera));
 	camera.id = "C";
-	if (!ft_parse_coord(tab[1], &camera.coord) 
+	if (ft_count_arr_elements(tab) != 4
+		|| !ft_parse_coord(tab[1], &camera.coord)
 		|| !ft_parse_vectors(tab[2], &camera.vector)
 		|| !ft_parse_fov(tab[3], &camera.fov))
 	{
 		ft_free_2d_arr(tab);
 		return (ft_error("C: not valid format"));
 	}
+	v = ft_V_init();
+	camera.rot = ft_xyz_rot(&v, &camera.vector);
 	(*rt)->scene->camera = camera;
 	ft_free_2d_arr(tab);
 	return (TRUE);
