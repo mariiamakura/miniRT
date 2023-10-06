@@ -103,6 +103,10 @@ t_matrix_3x3 ft_mat_trnsp(t_matrix_3x3 *mat);
 
 //math.c
 t_matrix_3x3 ft_xyz_rot(t_xyz *v1, t_xyz *v2);
+t_mat_utils	ft_rot_in_2d(t_xyz *v1, t_xyz *v2);
+t_matrix_3x3	ft_cos_sin_ox(t_xy *v1, t_xy *v2);
+t_matrix_3x3	ft_cos_sin_oy(t_xy *v1, t_xy *v2);
+t_xy	ft_create_xy(float x, float y);
 
 //2d_rot.c
 t_matrix_3x3 ft_xy_rot_ox(float cos_x, float sin_x);
