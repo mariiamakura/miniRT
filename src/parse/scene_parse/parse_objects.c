@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 15:06:14 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/04 15:14:04 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/06 17:12:09 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,6 @@ int	ft_parse_cylinder(char *line, t_cylinder *cy)
 	}
 	new_obj->i = index;
 	new_obj->next = NULL;
-	ft_add_obj(&(*rt)->scene->objs, new_obj);
+	ft_add_obj(&(*rt)->sc->objs, new_obj);
 	return (TRUE);
 } */

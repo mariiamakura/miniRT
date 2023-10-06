@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 12:50:17 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/04 14:39:40 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/06 17:14:21 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static int	ft_process_line(char *line, t_rt **rt, int *index)
 	}
 	else if (ft_strncmp(line, "C ", 2) == 0)
 	{
-		if (!ft_camera_parse(line, rt))
+		if (!ft_cam_parse(line, rt))
 			return (TRUE);
 	}
 	else if (ft_strncmp(line, "L ", 2) == 0)

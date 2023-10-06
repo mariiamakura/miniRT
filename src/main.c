@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 15:53:53 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/04 14:37:50 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/06 17:12:09 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	main(int ac, char **av)
 	if (ac != 2)
 	{
 		ft_putstr_fd("\033[31mError\n2 args required\n\033[0m", 2);
-		ft_putstr_fd("\033[31m ./miniRT [scenes]\n\033[0m", 2);
+		ft_putstr_fd("\033[31m ./miniRT [scs]\n\033[0m", 2);
 		return (-1);
 	}
 	if (!ft_parse(av[1], &rt))

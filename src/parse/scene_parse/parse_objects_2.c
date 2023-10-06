@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:07:30 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/04 15:15:40 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/06 17:12:09 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,6 @@ int	ft_parse_objects(char *line, t_rt **rt, int index)
 		return (ft_error("Invalid object format"));
 	}
 	new_obj->i = index;
-	ft_add_obj(&(*rt)->scene->objs, new_obj);
+	ft_add_obj(&(*rt)->sc->objs, new_obj);
 	return (TRUE);
 }

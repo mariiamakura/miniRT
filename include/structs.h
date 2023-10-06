@@ -71,14 +71,14 @@ typedef struct	s_ambient
 } t_ambient;
 
 
-typedef struct	s_camera
+typedef struct	s_cam
 {
     char	*id;
     float	fov;
     t_xyz	coord;
     t_xyz	vector; //vector
 	t_matrix_3x3 rot;
-} t_camera;
+} t_cam;
 
 typedef struct s_light 
 {
@@ -128,7 +128,7 @@ union u_figures
 	t_cylinder	cy;
 };
 
-//linked list of all objects in the scene
+//linked list of all objects in the sc
 typedef struct s_objects
 {
 	int	i;
@@ -153,16 +153,16 @@ typedef struct s_hitPoint
     float h2;
 } t_hitPoint;
 
-//struct for a scene (image that we render)
-//it should have an ambient and normal light, 1 camera and some objects
-typedef struct s_scene 
+//struct for a sc (image that we render)
+//it should have an ambient and normal light, 1 cam and some objects
+typedef struct s_sc 
 {
 	t_ambient	ambient;
-	t_camera	camera;
+	t_cam	cam;
 	t_light		light;
 	t_objects	*objs;
 	t_canva		canva;
-} t_scene;
+} t_sc;
 
 typedef struct s_window 
 {
@@ -173,7 +173,7 @@ typedef struct s_window
 //our main struct
 typedef struct s_rt 
 {
-	t_scene *scene;
+	t_sc *sc;
 	t_window *window; //not initialized after parsing
 } t_rt;
 

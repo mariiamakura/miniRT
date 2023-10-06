@@ -6,16 +6,22 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/06 17:03:23 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/06 18:00:55 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/miniRT.h"
 
-t_xyz CanvasToViewport(int x, int y, int fov) {
+t_xyz	ft_can_to_vport(int x, int y, int fov)
+{
+	float	distance;
+	t_xyz	res;
 
-    float d = Vw / (2 * tan((float) fov / 2 * M_PI / 180));
-    return (t_xyz) {(float) x * Vw / Cw, (float) y * Vh / Ch, d};
+	distance = Vw / (2 * tan((float) fov / 2 * M_PI / 180));
+	res.x = (float) x * Vw / Cw;
+	res.y = (float) y * Vh / Ch;
+	res.z = distance;
+	return (res);
 }
 
 t_xyz ft_get_intersec(t_xyz *O, float closest_t, t_xyz *D) {
@@ -30,8 +36,8 @@ t_xyz ft_get_intersec(t_xyz *O, float closest_t, t_xyz *D) {
 }
 
 float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V) {
-    t_ambient amb = (*rt)->scene->ambient;
-    t_light light_point = (*rt)->scene->light;
+    t_ambient amb = (*rt)->sc->ambient;
+    t_light light_point = (*rt)->sc->light;
     float i = 0.0;
     float s = 150; //spectacular light
 
@@ -94,7 +100,7 @@ int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t
 float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_sphere **closest_sphere, float t_min) {
     float closest_t = FLT_MAX;
     float t1, t2;
-    t_objects *object = (*rt)->scene->objs;
+    t_objects *object = (*rt)->sc->objs;
     while (object != NULL) {
         if (object->type == SPHERE) {
             t_sphere *sphere = &(object->fig.sp);
@@ -137,23 +143,43 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
     }
 }
 
-void render_scene(t_rt **rt)
+int	ft_render_fun(t_rt **rt, int Cx, int Cy)
 {
-	t_xyz O;
-	t_matrix_3x3 rot;
+	t_xyz			o;
+	t_matrix_3x3	rot;
+	t_xyz			can_to_v;
+	t_xyz			d;
+	t_color			color;
+	
+	o = (*rt)->sc->cam.coord;
+	rot = (*rt)->sc->cam.rot;
+	can_to_v = ft_can_to_vport(Cx, Cy, (*rt)->sc->cam.fov);
+	d = ft_mat_mul_xyz(&rot, &can_to_v);
+	color = TraceRay(rt, &o, &d);
+	return(ft_pixel(color.r, color.g, color.b, 255));
+}
 
-	O = (*rt)->scene->camera.coord;
-	rot = (*rt)->scene->camera.rot;
-	for (int Sx = 0; Sx < Cw; Sx++) {
-		for (int Sy = 0; Sy < Ch; Sy++) {
-			int Cx = Sx - Cw / 2;
-			int Cy = Ch / 2 - Sy;
-			t_xyz CanToV = CanvasToViewport(Cx, Cy, (*rt)->scene->camera.fov);
-			t_xyz D = ft_mat_mul_xyz(&rot, &CanToV);
-			t_color color = TraceRay(rt, &O, &D);
-			int fin_color = ft_pixel(color.r, color.g, color.b, 255);
+void render_sc(t_rt **rt)
+{
+	int Sx;
+	int Sy;
+	int Cx;
+	int Cy;
+	int fin_color;
+
+	Sx = 0;
+	while (Sx < Cw)
+	{
+		Sy = 0;
+		while (Sy < Ch)
+		{
+			Cx = Sx - Cw / 2;
+			Cy = Ch / 2 - Sy;
+			fin_color= ft_render_fun(rt, Cx, Cy);
 			mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);
+			Sy++;
 		}
+		Sx++;
 	}
 }
 
@@ -163,9 +189,9 @@ void	ft_hook(void *param)
 
 	rt = (t_rt **) param;
 	
-	ft_process_camera_movement(rt);
-	ft_process_camera_rotation(rt);
-	render_scene(rt);
+	ft_process_cam_movement(rt);
+	ft_process_cam_rotation(rt);
+	render_sc(rt);
 }
 
 int	ft_imag_init(t_rt **rt)

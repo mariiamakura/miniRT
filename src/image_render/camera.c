@@ -1,84 +1,67 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   camera.c                                           :+:      :+:    :+:   */
+/*   cam.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/26 12:56:57 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/06 17:03:27 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/06 17:12:09 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/miniRT.h"
 
-void ft_process_camera_movement(t_rt **rt)
+void	ft_process_cam_movement(t_rt **rt)
 {
-	t_xyz move_direction;
-	float move_value;
+	t_xyz			m_dir;
+	t_xyz			pos;
+	t_matrix_3x3	rot;
+	t_xyz			rot_m_dir;
 
-	move_value = 1;
+	pos = (*rt)->sc->cam.coord;
+	rot = (*rt)->sc->cam.rot;
 	if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window((*rt)->window->mlx);
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_W))
-		move_direction.z = move_value;
+		m_dir.z = 1;
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_S))
-		move_direction.z = -move_value;
+		m_dir.z = -1;
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_D))
-		move_direction.x = move_value;
+		m_dir.x = 1;
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_A))
-		move_direction.x = -move_value;
+		m_dir.x = -1;
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_SPACE))
-		move_direction.y = move_value;
+		m_dir.y = 1;
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_LEFT_SHIFT))
-		move_direction.y = -move_value;
+		m_dir.y = -1;
 	else
-		return;
-
-	t_xyz position = (*rt)->scene->camera.coord;
-	t_matrix_3x3 rotation = (*rt)->scene->camera.rot;
-	t_xyz rotated_move_direction = ft_mat_mul_xyz(&rotation, &move_direction);
-	(*rt)->scene->camera.coord = ft_xyz_plus(&position, &rotated_move_direction);
+		return ;
+	rot_m_dir = ft_mat_mul_xyz(&rot, &m_dir);
+	(*rt)->sc->cam.coord = ft_xyz_plus(&pos, &rot_m_dir);
 }
 
-void ft_process_camera_rotation(t_rt **rt)
+void	ft_process_cam_rotation(t_rt **rt)
 {
-	float rotation_value = M_PI / 2 / 10;
-	t_matrix_3x3 additional_rotation;
+	float			rot_val;
+	t_matrix_3x3	add_rot;
+	t_matrix_3x3	rot;
 
+	rot = (*rt)->sc->cam.rot;
+	rot_val = M_PI / 2 / 10;
 	if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_8))
-		additional_rotation = ft_xy_rot_ox(
-				cosf(rotation_value),
-				sinf(rotation_value)
-		);
+		add_rot = ft_xy_rot_ox(cosf(rot_val), sinf(rot_val));
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_2))
-		additional_rotation = ft_xy_rot_ox(
-				cosf(-rotation_value),
-				sinf(-rotation_value)
-		);
+		add_rot = ft_xy_rot_ox(cosf(-rot_val), sinf(-rot_val));
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_4))
-		additional_rotation = ft_xy_rot_oy(
-				cosf(-rotation_value),
-				sinf(-rotation_value)
-		);
+		add_rot = ft_xy_rot_oy(cosf(-rot_val), sinf(-rot_val));
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_6))
-		additional_rotation = ft_xy_rot_oy(
-				cosf(rotation_value),
-				sinf(rotation_value)
-		);
+		add_rot = ft_xy_rot_oy(cosf(rot_val), sinf(rot_val));
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_7))
-		additional_rotation = ft_xy_rot_oz(
-				cosf(rotation_value),
-				sinf(rotation_value)
-		);
+		add_rot = ft_xy_rot_oz(cosf(rot_val), sinf(rot_val));
 	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_9))
-		additional_rotation = ft_xy_rot_oz(
-				cosf(-rotation_value),
-				sinf(-rotation_value)
-		);
+		add_rot = ft_xy_rot_oz(cosf(-rot_val), sinf(-rot_val));
 	else
-		return;
-
-	t_matrix_3x3 rotation = (*rt)->scene->camera.rot;
-	(*rt)->scene->camera.rot = ft_mat_mul(&rotation, &additional_rotation);
+		return ;
+	(*rt)->sc->cam.rot = ft_mat_mul(&rot, &add_rot);
 }

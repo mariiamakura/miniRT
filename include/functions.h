@@ -22,9 +22,9 @@ int ft_elements_num(char *file_str);
 //init_parse_struct.c
 int ft_init_parse_rt(t_rt **rt);
 
-//light_camera_parse.c
+//light_cam_parse.c
 int	ft_ambient_light_parse(char *line, t_rt **rt);
-int ft_camera_parse(char *line, t_rt **rt);
+int ft_cam_parse(char *line, t_rt **rt);
 int ft_light_parse(char *line, t_rt **rt);
 
 //parse_ratio_color.c
@@ -61,15 +61,21 @@ void ft_free_rt(t_rt *rt);
 void ft_print_all(t_rt *rt);
 //static void ft_free_objects(t_objects *objs);
 
+
+
+
+
 //image_render
 //imag_init.c
 int ft_imag_init(t_rt **rt);
+int ft_render_fun(t_rt **rt, int Cx, int Cy);
+t_xyz	ft_can_to_vport(int x, int y, int fov);
 float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D,t_sphere **closest_sphere, float t_min);
 
-//camera.c
-void	ft_camera_orient(t_rt **rt);
-void ft_process_camera_movement(t_rt **rt);
-void ft_process_camera_rotation(t_rt **rt);
+//cam.c
+void	ft_cam_orient(t_rt **rt);
+void ft_process_cam_movement(t_rt **rt);
+void ft_process_cam_rotation(t_rt **rt);
 
 //colors.c
 void ft_gradient(t_color *color, t_rt **rt);
@@ -77,6 +83,10 @@ void ft_put_pixel(int x, int y, int color, t_rt **rt);
 int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
 t_color ft_set_fin_color(t_color *origin, float i);
 
+
+
+
+//math
 //xy_math.c
 t_xyz ft_assign_xyz(t_xy *v);
 float ft_xy_dot(t_xy *v1, t_xy *v2);
