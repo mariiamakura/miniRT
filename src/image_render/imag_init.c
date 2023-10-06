@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 14:39:27 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/04 16:19:17 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/06 14:14:17 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,18 +142,18 @@ void render_scene(t_rt **rt)
 	t_xyz O;
 	t_xyz V;
 	t_xyz camV;
-	t_matrix_3x3 rotate;
+	t_matrix_3x3 rot;
 
 	O = (*rt)->scene->camera.coord;
 	V = ft_V_init();
 	camV = (*rt)->scene->camera.vector;
-	rotate = ft_xyz_rotate(&V, &camV);
+	rot = ft_xyz_rot(&V, &camV);
 	for (int Sx = 0; Sx < Cw; Sx++) {
 		for (int Sy = 0; Sy < Ch; Sy++) {
 			int Cx = Sx - Cw / 2;
 			int Cy = Ch / 2 - Sy;
 			t_xyz CanToV = CanvasToViewport(Cx, Cy, (*rt)->scene->camera.fov);
-			t_xyz D = ft_mat_mul_xyz(&rotate, &CanToV);
+			t_xyz D = ft_mat_mul_xyz(&rot, &CanToV);
 			t_color color = TraceRay(rt, &O, &D);
 			int fin_color = ft_pixel(color.r, color.g, color.b, 255);
 			mlx_put_pixel((*rt)->window->img, Sx, Sy, fin_color);

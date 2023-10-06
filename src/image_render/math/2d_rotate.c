@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   2d_rotate.c                                        :+:      :+:    :+:   */
+/*   2d_rot.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 #include "../../../include/miniRT.h"
 
-t_matrix_3x3	ft_xy_rotate_ox(float cos_x, float sin_x)
+t_matrix_3x3	ft_xy_rot_ox(float cos_x, float sin_x)
 {
 	t_matrix_3x3	res;
 
@@ -28,7 +28,7 @@ t_matrix_3x3	ft_xy_rotate_ox(float cos_x, float sin_x)
 	return (res);
 }
 
-t_matrix_3x3	ft_xy_rotate_oy(float cos_y, float sin_y)
+t_matrix_3x3	ft_xy_rot_oy(float cos_y, float sin_y)
 {
 	t_matrix_3x3	res;
 
@@ -44,7 +44,7 @@ t_matrix_3x3	ft_xy_rotate_oy(float cos_y, float sin_y)
 	return (res);
 }
 
-t_matrix_3x3	ft_xy_rotate_oz(float cos_z, float sin_z)
+t_matrix_3x3	ft_xy_rot_oz(float cos_z, float sin_z)
 {
 	t_matrix_3x3	res;
 

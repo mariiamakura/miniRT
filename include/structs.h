@@ -33,25 +33,25 @@ typedef struct s_mat_utils
 {
 	t_xy	xy_ox;
 	t_xy	xy_oy;
-	t_xy	zx_vec1;
-	t_xyz	vec1_1;
-	t_xy	yz_vec1_1;
-	t_xy	zx_vec2;
-	t_xyz	vec2_1;
-	t_xy	yz_vec2_1;
+	t_xy	zx_v1;
+	t_xyz	v1_1;
+	t_xy	yz_v1_1;
+	t_xy	zx_v2;
+	t_xyz	v2_1;
+	t_xy	yz_v2_1;
 
-	t_matrix_3x3 rotate_mat_1_oy;
-	t_matrix_3x3 rotate_mat_1_ox;
-	t_matrix_3x3 rotate_mat_2_oy_transpose;
-	t_matrix_3x3 rotate_mat_2_ox_transpose;
+	t_matrix_3x3 rot_mat_1_oy;
+	t_matrix_3x3 rot_mat_1_ox;
+	t_matrix_3x3 rot_mat_2_oy_trnsp;
+	t_matrix_3x3 rot_mat_2_ox_trnsp;
 } t_mat_utils;
 
 typedef struct s_all_m
 {
-	t_matrix_3x3 rotate_mat_2_oy;
-	t_matrix_3x3 rotate_mat_2_ox;
-	t_matrix_3x3 rotate_mat_1;
-	t_matrix_3x3 rotate_mat_2;
+	t_matrix_3x3 rot_mat_2_oy;
+	t_matrix_3x3 rot_mat_2_ox;
+	t_matrix_3x3 rot_mat_1;
+	t_matrix_3x3 rot_mat_2;
 } t_all_m;
 
 //ambiant light
