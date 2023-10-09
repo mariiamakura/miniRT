@@ -70,7 +70,9 @@ void ft_print_all(t_rt *rt);
 int ft_imag_init(t_rt **rt);
 int ft_render_fun(t_rt **rt, int Cx, int Cy);
 t_xyz	ft_can_to_vport(int x, int y, int fov);
-float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D,t_sphere **closest_sphere, float t_min);
+//float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D,t_sphere **closest_sphere, float t_min);
+t_xyz ft_get_intersec(t_xyz *O, float closest_t, t_xyz *D);
+float ComputeLighting(t_xyz *P, t_xyz *N, t_rt **rt, t_xyz *V);
 
 //cam.c
 void	ft_cam_orient(t_rt **rt);
@@ -127,6 +129,21 @@ t_matrix_3x3 ft_xy_rot_oz(float cos_z, float sin_z);
 t_m_rows	ft_assign_m1_rows(t_matrix_3x3 *mat);
 t_m_rows	ft_assign_m2_rows(t_matrix_3x3 *mat);
 
+//IntersectRay.c
+
+int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t2);
+int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t);
+int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1, float *t2);
+int IntersectRayCap(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t, int isTopCap);
+int PointInsideCap(t_xyz *P, t_cylinder *cylinder);
+
+//ClosestIntersection.c
+
+float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_objects **closest_object, float t_min);
+
+//TraceRay
+
+t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D);
 
 //struct_init_image.c
 t_xyz ft_V_init(void);
