@@ -52,7 +52,7 @@ int PointInsideCap(t_xyz *P, t_cylinder *cylinder) {
 
 int IntersectRayCap(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t, int isTopCap) {
 	t_xyz temp = ft_xyz_mul_num(&cylinder->vector, cylinder->height);
-	t_xyz capCenter = isTopCap ? ft_xyz_plus(&cylinder->coord, &temp) : cylinder->coord; // Fixed this line
+	t_xyz capCenter = isTopCap ? ft_xyz_plus(&cylinder->coord, &temp) : cylinder->coord;
 	t_xyz normal = isTopCap ? cylinder->vector : ft_xyz_unary_minus(&cylinder->vector);
 
 	float denominator = ft_xyz_dot(D, &normal);
