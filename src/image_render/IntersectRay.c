@@ -83,61 +83,38 @@ int IntersectRayCap(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t, int isTo
 	return PointInsideCap(&P, cylinder);
 }
 
-
-
 int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1, float *t2) {
-	t_xyz OC = ft_xyz_minus(O, &cylinder->coord); //OC is calculated as the vector from the ray origin O to the cylinder's center.
-	t_xyz V = cylinder->vector;
+    t_xyz C = cylinder->coord;
+    float r = cylinder->diameter / 2.0;
+    float h = cylinder->height;
 
-	t_xyz temp = ft_xyz_mul_num(&V, ft_xyz_dot(D, &V));
-	t_xyz DP;
-	DP.x = D->x - temp.x;
-	DP.y = D->y - temp.y;
-	DP.z = D->z - temp.z;
+    t_xyz OC = ft_xyz_minus(O, &C);
+    t_xyz OD = *D;
 
-	temp = ft_xyz_mul_num(&V, ft_xyz_dot(&OC, &V));
-	t_xyz OCp;
-	OCp.x = OC.x - temp.x;
-	OCp.y = OC.y - temp.y;
-	OCp.z = OC.z - temp.z;
+    float a = OD.x * OD.x + OD.z * OD.z;
+    float b = 2 * (OC.x * OD.x + OC.z * OD.z);
+    float c = OC.x * OC.x + OC.z * OC.z - r * r;
 
-	float A = ft_xyz_dot(&DP, &DP);
-	float B = 2 * ft_xyz_dot(&OCp, &DP);
-	float C = ft_xyz_dot(&OCp, &OCp) - (cylinder->diameter / 2) * (cylinder->diameter / 2);
+    float discriminant = b * b - 4 * a * c;
 
-	float discriminant = B * B - 4 * A * C;
-	if (discriminant < 0) {
-		return FALSE;
-	}
+    if (discriminant < 0) {
+        return FALSE; // No intersection
+    }
 
-	float tempT1 = (-B + sqrt(discriminant)) / (2 * A);
-	float tempT2 = (-B - sqrt(discriminant)) / (2 * A);
+    // Compute the two solutions for t
+    float t1_ = (-b + sqrt(discriminant)) / (2 * a);
+    float t2_ = (-b - sqrt(discriminant)) / (2 * a);
 
-	t_xyz tempP1 = ft_xyz_mul_num(D, tempT1);
-	t_xyz P1 = ft_xyz_plus(O, &tempP1);
-	t_xyz tempP2 = ft_xyz_mul_num(D, tempT2);
-	t_xyz P2 = ft_xyz_plus(O, &tempP2);
+    // Check if the intersection points are within the height of the cylinder
+    float y1 = O->y + t1_ * OD.y;
+    float y2 = O->y + t2_ * OD.y;
 
-	t_xyz tempH1 = ft_xyz_minus(&P1, &cylinder->coord);
-	float height1 = ft_xyz_dot(&V, &tempH1);
-	t_xyz tempH2 = ft_xyz_minus(&P2, &cylinder->coord);
-	float height2 = ft_xyz_dot(&V, &tempH2);
-
-	if (height1 >= 0 && height1 <= cylinder->height) {
-		*t1 = tempT1;
-	} else {
-		*t1 = FLT_MAX;
-	}
-
-	if (height2 >= 0 && height2 <= cylinder->height) {
-		*t2 = tempT2;
-	} else {
-		*t2 = FLT_MAX;
-	}
-
-	if (*t1 == FLT_MAX && *t2 == FLT_MAX) {
-		return FALSE;
-	}
-
-	return TRUE;
+    if ((y1 >= -h && y1 <= h) || (y2 >= -h && y2 <= h)) {
+        // At least one intersection point is within the cylinder height
+        *t1 = t1_;
+        *t2 = t2_;
+        return TRUE;
+    } else {
+        return FALSE; // Both intersection points are outside the cylinder height
+    }
 }

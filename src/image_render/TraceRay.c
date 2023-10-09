@@ -36,10 +36,6 @@ t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
 		}
 		else if (closest_object->type == CYLINDER) {
 			t_cylinder *cylinder = &closest_object->fig.cy;
-//			t_xyz temp = ft_xyz_mul_num(&cylinder->vector, ft_xyz_dot(&N, &cylinder->vector));
-//			N.x = N.x - temp.x;
-//			N.y = N.y - temp.y;
-//			N.z = N.z - temp.z;
             N = ft_xyz_minus(&P, &closest_object->fig.cy.coord);
 			N = ft_xyz_normalize(&N);
 			color = cylinder->color;
