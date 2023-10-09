@@ -38,6 +38,7 @@ int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
 		return FALSE;
 	}
 	t_xyz OC = ft_xyz_minus(O, &plane->coord);
+    //printf("%f %f %f\n", OC.x, OC.y, OC.z);
 	*t = -ft_xyz_dot(&OC, &normal) / denominator;
 	if (*t < 0.0f) {
 		return FALSE;
@@ -85,8 +86,8 @@ int IntersectRayCap(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t, int isTo
 
 
 int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1, float *t2) {
-	t_xyz OC = ft_xyz_minus(O, &cylinder->coord);
-	t_xyz V = ft_xyz_normalize(&cylinder->vector);
+	t_xyz OC = ft_xyz_minus(O, &cylinder->coord); //OC is calculated as the vector from the ray origin O to the cylinder's center.
+	t_xyz V = cylinder->vector;
 
 	t_xyz temp = ft_xyz_mul_num(&V, ft_xyz_dot(D, &V));
 	t_xyz DP;
