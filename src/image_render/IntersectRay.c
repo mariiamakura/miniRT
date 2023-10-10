@@ -47,13 +47,11 @@ int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
 }
 
 int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1) {
-    // Вычисляем параметры цилиндра
-    t_xyz C = cylinder->coord;  // Центр цилиндра
-    t_xyz V = cylinder->vector; // Направляющий вектор цилиндра
-    float r = cylinder->diameter / 2.0f; // Радиус цилиндра
-    float h = cylinder->height / 2.0f;   // Половина высоты цилиндра
+    t_xyz C = cylinder->coord;
+    t_xyz V = cylinder->vector;
+    float r = cylinder->diameter / 2.0f;
+    float h = cylinder->height / 2.0f;
 
-    // Решаем уравнение P(t) = C(s) для параметра t
     t_xyz OC = ft_xyz_minus(O, &C);
     float a = ft_xyz_dot(D, D) - ft_xyz_dot(D, &V) * ft_xyz_dot(D, &V);
     float b = 2.0f * (ft_xyz_dot(D, &OC) - ft_xyz_dot(D, &V) * ft_xyz_dot(&OC, &V));
@@ -61,31 +59,30 @@ int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1) {
     float discriminant = b * b - 4.0f * a * c;
 
     if (discriminant < 0.0f) {
-        // Нет пересечения
+
         return FALSE;
     }
 
-    // Находим параметр t
+
     float t0_ = (-b - sqrtf(discriminant)) / (2.0f * a);
     float t1_ = (-b + sqrtf(discriminant)) / (2.0f * a);
 
-    // Проверяем, находятся ли точки пересечения внутри высоты цилиндра
+
     float s0 = ft_xyz_dot(&OC, &V) + t0_ * ft_xyz_dot(D, &V);
     float s1 = ft_xyz_dot(&OC, &V) + t1_ * ft_xyz_dot(D, &V);
 
     if (s0 < -h && s1 < -h) {
-        // Оба пересечения находятся ниже цилиндра
+
         return FALSE;
     }
     if (s0 > h && s1 > h) {
-        // Оба пересечения находятся выше цилиндра
+
         return FALSE;
     }
 
-    // Находим ближайшее пересечение
+
     float t = (s0 > -h && s0 < h) ? t0_ : t1_;
 
-    // Возвращаем параметр t и точку пересечения
     *t1 = t;
     return TRUE;
 }
