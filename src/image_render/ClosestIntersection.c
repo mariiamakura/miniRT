@@ -41,33 +41,17 @@ float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_objects **closest_obj
 		}
 		else if (object->type == CYLINDER) {
 			t_cylinder *cylinder = &(object->fig.cy);
-			float t1, t2;
-            //float t1, t2, tCap1, tCap2;
+			float t1;
 
 			// Check intersection with the cylinder body
-			if (IntersectRayCylinder(O, D, cylinder, &t1, &t2) && ((t1 > t_min && t1 < closest_t) || (t2 > t_min && t2 < closest_t)))
+			if (IntersectRayCylinder(O, D, cylinder, &t1) && ((t1 > t_min && t1 < closest_t)))
 			{
 				if (t1 > t_min && t1 < closest_t)
 				{
 					closest_t = t1;
                     *closest_object = object;
 				}
-				if (t2 > t_min && t2 < closest_t)
-				{
-					closest_t = t2;
-                    *closest_object = object;
-				}
 			}
-//            if (IntersectRayCylinderCaps(O, D, cylinder, &tCap1, &tCap2, t_min, closest_t)) {
-//                if (tCap1 < closest_t) {
-//                    closest_t = tCap1;
-//                    *closest_object = object;
-//                }
-//                if (tCap2 < closest_t) {
-//                    closest_t = tCap2;
-//                    *closest_object = object;
-//                }
-//            }
 		}
 
 		object = object->next;
