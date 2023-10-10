@@ -140,7 +140,7 @@ int PointInsideCap(t_xyz *P, t_cylinder *cylinder);
 //ClosestIntersection.c
 
 float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_objects **closest_object, float t_min);
-
+int IntersectRayCylinderCaps(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *tCap1, float *tCap2, float t_min, float closest_t);
 //TraceRay
 
 t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D);

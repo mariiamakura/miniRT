@@ -89,7 +89,7 @@ int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1, fl
     t_xyz v = *D; //ray direction
     t_xyz va = cylinder->vector; //cylinder direction {0,1,0}
     float r = cylinder->diameter / 2.0; //{0.5}
-    float h = cylinder->height;
+    //float h = cylinder->height;
 
     t_xyz delta_p = ft_xyz_minus(&p, &pa); //p - pa
 
@@ -116,22 +116,64 @@ int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1, fl
         //printf("no solutions");
         return FALSE; // No real solutions, no intersection
     }
-        // Calculate the two possible values of t
+    // Calculate the two possible values of t
     float t1_ = (-B.x + sqrt(discriminant)) / (2.0 * A.x);
     float t2_ = (-B.x - sqrt(discriminant)) / (2.0 * A.x);
     *t1 = t1_;
     *t2 = t2_;
 
-    if (t1_ <= h && t1_ >= 0) {
-        printf("t1 %f\n", t1_);
-        *t1 = t1_;
-    }
-    else {
-        printf("t1 does not satisfy conditions: t1_ = %f\n", t1_);
-    }
-    if (t2_ <= h && t2_ >= 0){
-        printf("t2 %f\n", t2_);
-        *t2 = t2_;
-    }
     return TRUE;
+}
+
+int IntersectRayCylinderCaps(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *tCap1, float *tCap2, float t_min, float closest_t) {
+    // Calculate the parameters for the planes of the cylinder caps
+    t_xyz p1 = cylinder->coord; // Center of the bottom cap
+    t_xyz p2; // Center of the top cap
+    p2.x = p1.x + cylinder->vector.x * cylinder->height;
+    p2.y = p1.y + cylinder->vector.y * cylinder->height;
+    p2.z = p1.z + cylinder->vector.z * cylinder->height;
+
+    // Calculate the normal vectors of the caps
+    t_xyz normal1 = cylinder->vector; // Normal of the bottom cap
+    t_xyz normal2; // Normal of the top cap
+    normal2.x = -cylinder->vector.x;
+    normal2.y = -cylinder->vector.y;
+    normal2.z = -cylinder->vector.z;
+
+    // Calculate t values for the intersections with the caps
+    t_xyz a1 = ft_xyz_minus(&p1, O);
+    float tCap1_ = ft_xyz_dot(&a1, &normal1) / ft_xyz_dot(D, &normal1);
+    t_xyz a2 = ft_xyz_minus(&p2, O);
+    float tCap2_ = ft_xyz_dot(&a2, &normal2) / ft_xyz_dot(D, &normal2);
+
+    // Check if the intersections are valid and within the caps' bounds
+    if (tCap1_ > t_min && tCap1_ < closest_t) {
+        t_xyz q1;
+        q1.x = O->x + tCap1_ * D->x;
+        q1.y = O->y + tCap1_ * D->y;
+        q1.z = O->z + tCap1_ * D->z;
+
+        float distance1 = (q1.x - p1.x) * (q1.x - p1.x) + (q1.z - p1.z) * (q1.z - p1.z);
+
+        if (distance1 <= (cylinder->diameter / 2.0) * (cylinder->diameter / 2.0)) {
+            *tCap1 = tCap1_;
+            return TRUE;
+        }
+    }
+
+    if (tCap2_ > t_min && tCap2_ < closest_t) {
+        t_xyz q2;
+        q2.x = O->x + tCap2_ * D->x;
+        q2.y = O->y + tCap2_ * D->y;
+        q2.z = O->z + tCap2_ * D->z;
+
+        float distance2 = (q2.x - p2.x) * (q2.x - p2.x) + (q2.z - p2.z) * (q2.z - p2.z);
+
+        if (distance2 <= (cylinder->diameter / 2.0) * (cylinder->diameter / 2.0)) {
+            *tCap2 = tCap2_;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
 }
