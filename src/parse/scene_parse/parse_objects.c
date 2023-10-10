@@ -90,6 +90,7 @@ int	ft_parse_cylinder(char *line, t_cylinder *cy)
 		ft_free_2d_arr(tab);
 		return (FALSE);
 	}
+    cylinder.vector = ft_xyz_normalize(&cylinder.vector);
 	ft_free_2d_arr(tab);
 	*cy = cylinder;
 	return (TRUE);
