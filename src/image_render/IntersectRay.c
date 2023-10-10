@@ -38,7 +38,6 @@ int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
 		return FALSE;
 	}
 	t_xyz OC = ft_xyz_minus(O, &plane->coord);
-    //printf("%f %f %f\n", OC.x, OC.y, OC.z);
 	*t = -ft_xyz_dot(&OC, &normal) / denominator;
 	if (*t < 0.0f) {
 		return FALSE;
@@ -46,7 +45,50 @@ int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
 	return TRUE;
 }
 
-int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1) {
+int IntersectOneCapCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, t_plane *plane, float *t)
+{
+    if (!IntersectRayPlane(O, D, plane, t))
+        return FALSE;
+    t_xyz dir= ft_xyz_mul_num(D, *t);
+    t_xyz inter = ft_xyz_plus(O, &dir);
+    t_xyz diff = ft_xyz_minus(&inter, &plane->coord);
+    float distance = ft_xyz_length(&diff);
+    if (distance > cylinder->diameter / 2.0f)
+        return FALSE;
+    return TRUE;
+}
+
+int IntersectRayCapsCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t)
+{
+    t_plane top;
+    t_plane bottom;
+    float half_h = cylinder->height / 2.0f;
+
+    t_xyz norm = ft_xyz_normalize(&cylinder->vector);
+    t_xyz half_h_norm = ft_xyz_mul_num(&norm, half_h);
+    top.vector = norm;
+    bottom.vector = ft_xyz_unary_minus(&norm);
+
+    top.coord = ft_xyz_plus(&cylinder->coord, &half_h_norm);
+    bottom.coord = ft_xyz_minus(&cylinder->coord, &half_h_norm);
+
+    float t_top;
+    float t_bottom;
+
+    int top_intersected = IntersectOneCapCylinder(O, D, cylinder, &top, &t_top);
+    int bottom_intersected = IntersectOneCapCylinder(O, D, cylinder, &bottom, &t_bottom);
+    if (!top_intersected && !bottom_intersected)
+        return FALSE;
+    if (!bottom_intersected)
+        *t = t_top;
+    else if (!top_intersected)
+        *t = t_bottom;
+    else
+        *t = fminf(t_top, t_bottom);
+    return TRUE;
+}
+
+int IntersectRaySide(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1) { //
     t_xyz C = cylinder->coord;
     t_xyz V = cylinder->vector;
     float r = cylinder->diameter / 2.0f;
@@ -80,10 +122,27 @@ int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1) {
         return FALSE;
     }
 
-
     float t = (s0 > -h && s0 < h) ? t0_ : t1_;
 
     *t1 = t;
     return TRUE;
+}
+
+int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t){
+    float t_top;
+    float t_bottom;
+
+    int top_intersected = IntersectRaySide(O, D, cylinder, &t_top);
+    int bottom_intersected = IntersectRayCapsCylinder(O, D, cylinder, &t_bottom);
+    if (!top_intersected && !bottom_intersected)
+        return FALSE;
+    if (!bottom_intersected)
+        *t = t_top;
+    else if (!top_intersected)
+        *t = t_bottom;
+    else
+        *t = fminf(t_top, t_bottom);
+    return TRUE;
+
 }
 

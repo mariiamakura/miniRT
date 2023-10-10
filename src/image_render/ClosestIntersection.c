@@ -46,11 +46,10 @@ float ClosestIntersection(t_rt **rt, t_xyz *O, t_xyz *D, t_objects **closest_obj
 			// Check intersection with the cylinder body
 			if (IntersectRayCylinder(O, D, cylinder, &t1) && ((t1 > t_min && t1 < closest_t)))
 			{
-				if (t1 > t_min && t1 < closest_t)
-				{
-					closest_t = t1;
+                if (t1 > t_min && t1 < closest_t) {
+                    closest_t = t1;
                     *closest_object = object;
-				}
+                }
 			}
 		}
 

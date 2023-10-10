@@ -133,7 +133,7 @@ t_m_rows	ft_assign_m2_rows(t_matrix_3x3 *mat);
 
 int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t2);
 int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t);
-int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1);
+int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t);
         int IntersectRayCap(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t, int isTopCap);
 int PointInsideCap(t_xyz *P, t_cylinder *cylinder);
 
