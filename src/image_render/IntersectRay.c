@@ -45,14 +45,25 @@ int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
 	return TRUE;
 }
 
+t_xyz RevealIntersectionPointXyz(t_xyz *O, t_xyz *D, float t) {
+    t_xyz dir = ft_xyz_mul_num(D, t);
+    t_xyz inter = ft_xyz_plus(O, &dir);
+    return (inter);
+}
+
+float ft_distance(t_xyz *vec1, t_xyz *vec2)
+{
+    t_xyz diff = ft_xyz_minus(vec1, vec2);
+    float distance = ft_xyz_length(&diff);
+    return distance;
+}
+
 int IntersectOneCapCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, t_plane *plane, float *t)
 {
     if (!IntersectRayPlane(O, D, plane, t))
         return FALSE;
-    t_xyz dir= ft_xyz_mul_num(D, *t);
-    t_xyz inter = ft_xyz_plus(O, &dir);
-    t_xyz diff = ft_xyz_minus(&inter, &plane->coord);
-    float distance = ft_xyz_length(&diff);
+    t_xyz inter = RevealIntersectionPointXyz(O, D, *t);
+    float distance = ft_distance(&inter, &plane->coord);
     if (distance > cylinder->diameter / 2.0f)
         return FALSE;
     return TRUE;
@@ -88,11 +99,12 @@ int IntersectRayCapsCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t)
     return TRUE;
 }
 
-int IntersectRaySide(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1) { //
+int IntersectRaySide(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1) {
     t_xyz C = cylinder->coord;
     t_xyz V = cylinder->vector;
     float r = cylinder->diameter / 2.0f;
     float h = cylinder->height / 2.0f;
+    float r_surrounding_sphere = sqrtf(r * r + h * h);
 
     t_xyz OC = ft_xyz_minus(O, &C);
     float a = ft_xyz_dot(D, D) - ft_xyz_dot(D, &V) * ft_xyz_dot(D, &V);
@@ -109,22 +121,13 @@ int IntersectRaySide(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1) { //
     float t0_ = (-b - sqrtf(discriminant)) / (2.0f * a);
     float t1_ = (-b + sqrtf(discriminant)) / (2.0f * a);
 
+    *t1 = fminf(t0_, t1_);
 
-    float s0 = ft_xyz_dot(&OC, &V) + t0_ * ft_xyz_dot(D, &V);
-    float s1 = ft_xyz_dot(&OC, &V) + t1_ * ft_xyz_dot(D, &V);
+    t_xyz point = RevealIntersectionPointXyz(O, D, *t1);
 
-    if (s0 < -h && s1 < -h) {
-
+    float distance = ft_distance(&point, &cylinder->coord);
+    if (distance > r_surrounding_sphere)
         return FALSE;
-    }
-    if (s0 > h && s1 > h) {
-
-        return FALSE;
-    }
-
-    float t = (s0 > -h && s0 < h) ? t0_ : t1_;
-
-    *t1 = t;
     return TRUE;
 }
 
@@ -143,6 +146,5 @@ int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t){
     else
         *t = fminf(t_top, t_bottom);
     return TRUE;
-
 }
 
