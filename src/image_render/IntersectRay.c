@@ -84,37 +84,54 @@ int IntersectRayCap(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t, int isTo
 }
 
 int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1, float *t2) {
-    t_xyz C = cylinder->coord;
-    float r = cylinder->diameter / 2.0;
+    t_xyz p = *O; //ray origin
+    t_xyz pa = cylinder->coord; //cylinder axis point (center line) {0,0,0}
+    t_xyz v = *D; //ray direction
+    t_xyz va = cylinder->vector; //cylinder direction {0,1,0}
+    float r = cylinder->diameter / 2.0; //{0.5}
     float h = cylinder->height;
 
-    t_xyz OC = ft_xyz_minus(O, &C);
-    t_xyz OD = *D;
+    t_xyz delta_p = ft_xyz_minus(&p, &pa); //p - pa
 
-    float a = OD.x * OD.x + OD.z * OD.z;
-    float b = 2 * (OC.x * OD.x + OC.z * OD.z);
-    float c = OC.x * OC.x + OC.z * OC.z - r * r;
+    float dot_product = ft_xyz_dot(&v, &va);
 
-    float discriminant = b * b - 4 * a * c;
+    t_xyz A;
+    A.x = v.x - dot_product * va.x;
+    A.y = v.y - dot_product * va.y;
+    A.z = v.z - dot_product * va.z;
+
+    float dot_product2 = ft_xyz_dot(&delta_p, &va);
+    t_xyz B;
+
+    B.x = 2.0 * (A.x * delta_p.x - dot_product2 * A.x * va.x);
+    B.y = 2.0 * (A.y * delta_p.y - dot_product2 * A.y * va.y);
+    B.z = 2.0 * (A.z * delta_p.z - dot_product2 * A.z * va.z);
+
+    float dot_product3 = ft_xyz_dot(&delta_p, &v);
+    float C = dot_product3 * dot_product3 - r * r;
+
+    double discriminant = B.x * B.x + B.y * B.y + B.z * B.z - 4.0 * A.x * C;
 
     if (discriminant < 0) {
-        return FALSE; // No intersection
+        //printf("no solutions");
+        return FALSE; // No real solutions, no intersection
     }
+        // Calculate the two possible values of t
+    float t1_ = (-B.x + sqrt(discriminant)) / (2.0 * A.x);
+    float t2_ = (-B.x - sqrt(discriminant)) / (2.0 * A.x);
+    *t1 = t1_;
+    *t2 = t2_;
 
-    // Compute the two solutions for t
-    float t1_ = (-b + sqrt(discriminant)) / (2 * a);
-    float t2_ = (-b - sqrt(discriminant)) / (2 * a);
-
-    // Check if the intersection points are within the height of the cylinder
-    float y1 = O->y + t1_ * OD.y;
-    float y2 = O->y + t2_ * OD.y;
-
-    if ((y1 >= -h && y1 <= h) || (y2 >= -h && y2 <= h)) {
-        // At least one intersection point is within the cylinder height
+    if (t1_ <= h && t1_ >= 0) {
+        printf("t1 %f\n", t1_);
         *t1 = t1_;
-        *t2 = t2_;
-        return TRUE;
-    } else {
-        return FALSE; // Both intersection points are outside the cylinder height
     }
+    else {
+        printf("t1 does not satisfy conditions: t1_ = %f\n", t1_);
+    }
+    if (t2_ <= h && t2_ >= 0){
+        printf("t2 %f\n", t2_);
+        *t2 = t2_;
+    }
+    return TRUE;
 }
