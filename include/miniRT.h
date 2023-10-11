@@ -6,7 +6,7 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 15:49:37 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/05 12:56:15 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/11 13:26:10 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
+#include <float.h>
 #include <unistd.h>
 #include "../lib/MLX42/include/MLX42/MLX42.h"
 #include "../lib/libft/libft.h"
 #include "structs.h"
 #include "functions.h"
 
-#define WIDTH 1000
-#define HEIGHT 800
+#define Cw 800
+#define Ch 800
+#define Vw 1
+#define Vh 1
 #define FALSE 0
 #define TRUE 1
 

@@ -1,45 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_utils.c                                      :+:      :+:    :+:   */
+/*   struct_init_image.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/05 12:26:45 by mparasku          #+#    #+#             */
-/*   Updated: 2023/10/04 14:40:56 by mparasku         ###   ########.fr       */
+/*   Created: 2023/10/04 16:15:38 by mparasku          #+#    #+#             */
+/*   Updated: 2023/10/04 16:19:04 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/miniRT.h"
 
-int	ft_error(char *err_msg)
+t_xyz ft_V_init(void)
 {
-	ft_putstr_fd(err_msg, 2);
-	ft_putstr_fd("\n", 2);
-	return (FALSE);
-}
+	t_xyz V;
 
-int	ft_count_arr_elements(char **tab)
-{
-	int	i;
+	V.x = 0.0;
+	V.y = 0.0;
+	V.z = 1.0;
 
-	i = 0;
-	while (tab[i])
-	{
-		i++;
-	}
-	return (i);
-}
-
-void	ft_free_2d_arr(char **tab)
-{
-	int	i;
-
-	i = 0;
-	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
-	free (tab);
-}
+	return (V);
+} 

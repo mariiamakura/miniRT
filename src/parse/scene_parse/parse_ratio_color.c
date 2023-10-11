@@ -6,15 +6,15 @@
 /*   By: mparasku <mparasku@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/06 17:07:54 by mparasku          #+#    #+#             */
-/*   Updated: 2023/09/08 14:04:36 by mparasku         ###   ########.fr       */
+/*   Updated: 2023/10/04 15:45:29 by mparasku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/miniRT.h"
 
-int ft_parse_color(char *str, t_color *colors)
+int	ft_parse_color(char *str, t_color *colors)
 {
-	char **color;
+	char	**color;
 
 	color = ft_split(str, ',');
 	if (!color)
@@ -36,10 +36,10 @@ int ft_parse_color(char *str, t_color *colors)
 	return (TRUE);
 }
 
-int is_color(char *str)
+int	is_color(char *str)
 {
-	int i;
-	int color;
+	int	i;
+	int	color;
 
 	i = 0;
 	if (!str)
@@ -59,29 +59,19 @@ int is_color(char *str)
 		return (FALSE);
 }
 
-int ft_parse_ratio(char *str, float *ratio)
+float	ft_str_to_float(char *str)
 {
-	if(ft_is_float(str) == FALSE)
-		return (FALSE);
-	*ratio = ft_str_to_float(str);
-	if (*ratio < 0 || *ratio > 1)
-		return (FALSE);
-	return (TRUE);
-}
-
-float ft_str_to_float(char *str)
-{
-	float res;
-	float after_dot;
-	float div;
-	float sign;
+	float	res;
+	float	after_dot;
+	float	div;
+	float	sign;
 
 	sign = 1.0;
 	div = 1.0;
 	after_dot = 0.0;
 	if (str && str[0] == '-')
 		sign *= -1.0;
-	res = (float)ft_atoi(str); //adds an int part of the float
+	res = (float)ft_atoi(str);
 	while (*str && *str != '.')
 		str++;
 	if (*str++ == '.')
@@ -97,26 +87,35 @@ float ft_str_to_float(char *str)
 	return (res);
 }
 
-int ft_is_float(char *str)
+static int	is_valid_fractional_part(char *str, int *i, int *flag)
 {
-	int i;
-	int flag;
-	
+	if (str[*i] == '.' && str[*i + 1])
+	{
+		if (*flag == TRUE)
+		{
+			return (FALSE);
+		}
+		(*flag) = (TRUE);
+		(*i)++;
+	}
+	return (TRUE);
+}
+
+int	ft_is_float(char *str)
+{
+	int	i;
+	int	flag;
+
 	i = 0;
 	flag = FALSE;
 	if (str[i] == '+' || str[i] == '-')
 		i++;
-	while(str[i])
+	while (str[i])
 	{
 		if (str[i] >= '0' && str[i] <= '9' && flag == FALSE)
 			i++;
-		else if (str[i] == '.' && str[i + 1])
-		{
-			if (flag == TRUE)
-				return (FALSE);
-			flag = TRUE;
-			i++;
-		}
+		else if (!is_valid_fractional_part(str, &i, &flag))
+			return (FALSE);
 		else if (str[i] >= '0' && str[i] <= '9' && flag == TRUE)
 			i++;
 		else if ((str[i] == ' ' || str[i] == '\n'))

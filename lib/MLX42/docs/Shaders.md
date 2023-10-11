@@ -5,7 +5,7 @@ See copyright and license notice in the root project for more information.
 
 # Shaders
 
-In computer graphics, a shader is a type of computer program used for shading in 3D/2D scenes (the production of appropriate levels of light, darkness, and color in a rendered image). MLX42 exposes the shaders and compiles them into the library for portability.
+In computer graphics, a shader is a type of computer program used for shading in 3D/2D scs (the production of appropriate levels of light, darkness, and color in a rendered image). MLX42 exposes the shaders and compiles them into the library for portability.
 
 ```glsl
 
