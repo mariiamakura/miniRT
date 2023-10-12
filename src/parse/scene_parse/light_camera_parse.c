@@ -43,8 +43,8 @@ int	ft_ambient_light_parse(char *line, t_rt **rt)
 int	ft_cam_parse(char *line, t_rt **rt)
 {
 	t_cam	cam;
-	char		**tab;
-	t_xyz		v;
+	char	**tab;
+	t_xyz	v;
 
 	if ((*rt)->sc->cam.id)
 		return (ft_error("More then 1 cam"));
@@ -61,7 +61,7 @@ int	ft_cam_parse(char *line, t_rt **rt)
 		ft_free_2d_arr(tab);
 		return (ft_error("C: not valid format"));
 	}
-	v = ft_V_init();
+	v = ft_v_init();
 	cam.rot = ft_xyz_rot(&v, &cam.vector);
 	(*rt)->sc->cam = cam;
 	ft_free_2d_arr(tab);

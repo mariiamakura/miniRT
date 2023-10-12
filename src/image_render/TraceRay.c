@@ -12,37 +12,53 @@
 
 #include "../../include/miniRT.h"
 
-t_color TraceRay(t_rt **rt, t_xyz *O, t_xyz *D) {
-	float closest_t = FLT_MAX;
-	t_objects *closest_object = NULL;
+static void	init_trace(t_tra_ray *var, t_rt **rt, t_xyz *O, t_xyz *D)
+{
+	var->param.o = O;
+	var->param.d = D;
+	var->param.t_min = 1;
+	var->closest_t = FLT_MAX;
+	var->closest_object = NULL;
+	var->closest_t = closest_inter(rt, var->param, &var->closest_object);
+}
 
-	closest_t = ClosestIntersection(rt, O, D, &closest_object, 1);
+t_color	final_collor(t_tra_ray *var, t_rt **rt, t_xyz *O, t_xyz *D)
+{
+	var->p = ft_get_intersec(O, var->closest_t, D);
+	if (var->closest_object->type == SPHERE)
+	{
+		var->n = ft_xyz_minus(&var->p, &var->closest_object->fig.sp.coord);
+		var->n = ft_xyz_normalize(&var->n);
+		var->color = var->closest_object->fig.sp.color;
+	}
+	if (var->closest_object->type == PLANE)
+	{
+		var->n = var->closest_object->fig.pl.vector;
+		var->n = ft_xyz_normalize(&var->n);
+		var->color = var->closest_object->fig.pl.color;
+	}
+	if (var->closest_object->type == CYLINDER)
+	{
+		var->cylinder = &var->closest_object->fig.cy;
+		var->n = ft_xyz_minus(&var->p, &var->closest_object->fig.cy.coord);
+		var->n = ft_xyz_normalize(&var->n);
+		var->color = var->cylinder->color;
+	}
+	var->min_d = ft_xyz_unary_minus(D);
+	var->i = compute_lighting(&var->p, &var->n, rt, &var->min_d);
+	var->fin_color = ft_set_fin_color(&var->color, var->i);
+	return (var->fin_color);
+}
 
-	if (closest_object == NULL) {
-		return (t_color) {0, 0, 0};
-	} else {
-		t_xyz P = ft_get_intersec(O, closest_t, D);
-		t_xyz N;
-		t_color color;
-    if (closest_object->type == SPHERE) {
-			N = ft_xyz_minus(&P, &closest_object->fig.sp.coord);
-			N = ft_xyz_normalize(&N);
-			color = closest_object->fig.sp.color;
-		}
-    if (closest_object->type == PLANE) {
-			N = closest_object->fig.pl.vector;
-			N = ft_xyz_normalize(&N);
-			color = closest_object->fig.pl.color;
-		}
-		else if (closest_object->type == CYLINDER) {
-			t_cylinder *cylinder = &closest_object->fig.cy;
-            N = ft_xyz_minus(&P, &closest_object->fig.cy.coord);
-			N = ft_xyz_normalize(&N);
-			color = cylinder->color;
-		}
-		t_xyz min_D = ft_xyz_unary_minus(D);
-		float i = ComputeLighting(&P, &N, rt, &min_D);
-		t_color fin_color = ft_set_fin_color(&color, i);
-		return fin_color;
+t_color	trace_ray(t_rt **rt, t_xyz *O, t_xyz *D)
+{
+	t_tra_ray	var;
+
+	init_trace(&var, rt, O, D);
+	if (var.closest_object == NULL)
+		return ((t_color){0, 0, 0});
+	else
+	{
+		return (final_collor(&var, rt, O, D));
 	}
 }

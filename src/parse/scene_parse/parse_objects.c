@@ -66,6 +66,12 @@ int	ft_sphere_parse(char *line, t_sphere *sp)
 	return (TRUE);
 }
 
+static int	ft_free_and_fail(char **tab)
+{
+	ft_free_2d_arr(tab);
+	return (FALSE);
+}
+
 int	ft_parse_cylinder(char *line, t_cylinder *cy)
 {
 	t_cylinder	cylinder;
@@ -76,21 +82,15 @@ int	ft_parse_cylinder(char *line, t_cylinder *cy)
 	if (!tab)
 		return (FALSE);
 	if (ft_count_arr_elements(tab) != 6)
-	{
-		ft_free_2d_arr(tab);
-		return (FALSE);
-	}
+		return (ft_free_and_fail(tab));
 	cylinder.id = "cy";
 	if (!ft_parse_coord(tab[1], &cylinder.coord)
-		|| !ft_parse_vectors(tab[2], &cylinder.vector) 
+		|| !ft_parse_vectors(tab[2], &cylinder.vector)
 		|| !ft_parse_num_var(tab[3], &cylinder.diameter)
-		|| !ft_parse_num_var(tab[4], &cylinder.height) 
+		|| !ft_parse_num_var(tab[4], &cylinder.height)
 		|| !ft_parse_color(tab[5], &cylinder.color))
-	{
-		ft_free_2d_arr(tab);
-		return (FALSE);
-	}
-    cylinder.vector = ft_xyz_normalize(&cylinder.vector);
+		return (ft_free_and_fail(tab));
+	cylinder.vector = ft_xyz_normalize(&cylinder.vector);
 	ft_free_2d_arr(tab);
 	*cy = cylinder;
 	return (TRUE);

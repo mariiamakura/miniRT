@@ -17,10 +17,10 @@ libmlx:
 
 $(OBJ_DIR)/%.o: ./src/%.c
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS) && printf "Compiling: $(notdir $<)"
+	@$(CC) -g3 $(CFLAGS) -o $@ -c $< $(HEADERS) && printf "Compiling: $(notdir $<)"
 
 $(NAME): $(OBJS)
-	@$(CC) $(OBJS) $(LIBS) $(HEADERS) -o $(NAME) $(LIBFT)
+	@$(CC) -g3 $(OBJS) $(LIBS) $(HEADERS) -o $(NAME) $(LIBFT)
 
 libft:
 	@echo "Building libft library"

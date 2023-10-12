@@ -12,13 +12,12 @@
 
 #include "../../include/miniRT.h"
 
-t_xyz ft_V_init(void)
+t_xyz	ft_v_init(void)
 {
-	t_xyz V;
+	t_xyz	v;
 
-	V.x = 0.0;
-	V.y = 0.0;
-	V.z = 1.0;
-
-	return (V);
-} 
+	v.x = 0.0;
+	v.y = 0.0;
+	v.z = 1.0;
+	return (v);
+}

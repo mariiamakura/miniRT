@@ -12,139 +12,81 @@
 
 #include "../../include/miniRT.h"
 
-int IntersectRaySphere(t_xyz *O, t_xyz *D, t_sphere *sphere, float *t1, float *t2) {
-	t_xyz *C = &sphere->coord;
-	float r = sphere->r;
-	t_xyz OC = ft_xyz_minus(O, C);
-
-	float k1 = ft_xyz_dot(D, D);
-	float k2 = 2 * ft_xyz_dot(&OC, D);
-	float k3 = ft_xyz_dot(&OC, &OC) - r * r;
-
-	float discriminant = k2 * k2 - 4 * k1 * k3;
-	if (discriminant < 0) {
-		return FALSE;
-	}
-
-	*t1 = (-k2 + sqrt(discriminant)) / (2 * k1);
-	*t2 = (-k2 - sqrt(discriminant)) / (2 * k1);
-	return TRUE;
-}
-
-int IntersectRayPlane(t_xyz *O, t_xyz *D, t_plane *plane, float *t) {
-	t_xyz normal = plane->vector;
-	float denominator = ft_xyz_dot(D, &normal);
-	if (fabs(denominator) < 0.0001f) {
-		return FALSE;
-	}
-	t_xyz OC = ft_xyz_minus(O, &plane->coord);
-	*t = -ft_xyz_dot(&OC, &normal) / denominator;
-	if (*t < 0.0f) {
-		return FALSE;
-	}
-	return TRUE;
-}
-
-t_xyz RevealIntersectionPointXyz(t_xyz *O, t_xyz *D, float t) {
-    t_xyz dir = ft_xyz_mul_num(D, t);
-    t_xyz inter = ft_xyz_plus(O, &dir);
-    return (inter);
-}
-
-float ft_distance(t_xyz *vec1, t_xyz *vec2)
+int	intersect_ray_sp(t_int param, t_sphere *sp, float *t1, float *t2)
 {
-    t_xyz diff = ft_xyz_minus(vec1, vec2);
-    float distance = ft_xyz_length(&diff);
-    return distance;
+	t_xyz	*c;
+	float	r;
+	t_xyz	oc;
+	t_ks	ks;
+	float	discriminant;
+
+	c = &sp->coord;
+	r = sp->r;
+	oc = ft_xyz_minus(param.o, c);
+	ks.k1 = ft_xyz_dot(param.d, param.d);
+	ks.k2 = 2 * ft_xyz_dot(&oc, param.d);
+	ks.k3 = ft_xyz_dot(&oc, &oc) - r * r;
+	discriminant = ks.k2 * ks.k2 - 4 * ks.k1 * ks.k3;
+	if (discriminant < 0)
+	{
+		return (FALSE);
+	}
+	*t1 = (-ks.k2 + sqrt(discriminant)) / (2 * ks.k1);
+	*t2 = (-ks.k2 - sqrt(discriminant)) / (2 * ks.k1);
+	return (TRUE);
 }
 
-int IntersectOneCapCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, t_plane *plane, float *t)
+int	intersect_ray_pl(t_int param, t_plane *pl, float *t)
 {
-    if (!IntersectRayPlane(O, D, plane, t))
-        return FALSE;
-    t_xyz inter = RevealIntersectionPointXyz(O, D, *t);
-    float distance = ft_distance(&inter, &plane->coord);
-    if (distance > cylinder->diameter / 2.0f)
-        return FALSE;
-    return TRUE;
+	t_xyz	normal;
+	t_xyz	oc;
+	float	denominator;
+
+	normal = pl->vector;
+	denominator = ft_xyz_dot(param.d, &normal);
+	if (fabs(denominator) < 0.0001f)
+	{
+		return (FALSE);
+	}
+	oc = ft_xyz_minus(param.o, &pl->coord);
+	*t = -ft_xyz_dot(&oc, &normal) / denominator;
+	if (*t < 0.0f)
+	{
+		return (FALSE);
+	}
+	return (TRUE);
 }
 
-int IntersectRayCapsCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t)
+t_xyz	reveal_intersectionpoint_xyz(t_int param, float t)
 {
-    t_plane top;
-    t_plane bottom;
-    float half_h = cylinder->height / 2.0f;
+	t_xyz	dir;
+	t_xyz	inter;
 
-    t_xyz norm = ft_xyz_normalize(&cylinder->vector);
-    t_xyz half_h_norm = ft_xyz_mul_num(&norm, half_h);
-    top.vector = norm;
-    bottom.vector = ft_xyz_unary_minus(&norm);
-
-    top.coord = ft_xyz_plus(&cylinder->coord, &half_h_norm);
-    bottom.coord = ft_xyz_minus(&cylinder->coord, &half_h_norm);
-
-    float t_top;
-    float t_bottom;
-
-    int top_intersected = IntersectOneCapCylinder(O, D, cylinder, &top, &t_top);
-    int bottom_intersected = IntersectOneCapCylinder(O, D, cylinder, &bottom, &t_bottom);
-    if (!top_intersected && !bottom_intersected)
-        return FALSE;
-    if (!bottom_intersected)
-        *t = t_top;
-    else if (!top_intersected)
-        *t = t_bottom;
-    else
-        *t = fminf(t_top, t_bottom);
-    return TRUE;
+	dir = ft_xyz_mul_num(param.d, t);
+	inter = ft_xyz_plus(param.o, &dir);
+	return (inter);
 }
 
-int IntersectRaySide(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t1) {
-    t_xyz C = cylinder->coord;
-    t_xyz V = cylinder->vector;
-    float r = cylinder->diameter / 2.0f;
-    float h = cylinder->height / 2.0f;
-    float r_surrounding_sphere = sqrtf(r * r + h * h);
+float	ft_distance(t_xyz *vec1, t_xyz *vec2)
+{
+	float	distance;
+	t_xyz	diff;
 
-    t_xyz OC = ft_xyz_minus(O, &C);
-    float a = ft_xyz_dot(D, D) - ft_xyz_dot(D, &V) * ft_xyz_dot(D, &V);
-    float b = 2.0f * (ft_xyz_dot(D, &OC) - ft_xyz_dot(D, &V) * ft_xyz_dot(&OC, &V));
-    float c = ft_xyz_dot(&OC, &OC) - ft_xyz_dot(&OC, &V) * ft_xyz_dot(&OC, &V) - r * r;
-    float discriminant = b * b - 4.0f * a * c;
-
-    if (discriminant < 0.0f) {
-
-        return FALSE;
-    }
-
-
-    float t0_ = (-b - sqrtf(discriminant)) / (2.0f * a);
-    float t1_ = (-b + sqrtf(discriminant)) / (2.0f * a);
-
-    *t1 = fminf(t0_, t1_);
-
-    t_xyz point = RevealIntersectionPointXyz(O, D, *t1);
-
-    float distance = ft_distance(&point, &cylinder->coord);
-    if (distance > r_surrounding_sphere)
-        return FALSE;
-    return TRUE;
+	diff = ft_xyz_minus(vec1, vec2);
+	distance = ft_xyz_length(&diff);
+	return (distance);
 }
 
-int IntersectRayCylinder(t_xyz *O, t_xyz *D, t_cylinder *cylinder, float *t){
-    float t_top;
-    float t_bottom;
+int	in_one_cap_cy(t_int param, t_cylinder *cy, t_plane *pl, float *t)
+{
+	float	distance;
+	t_xyz	inter;
 
-    int top_intersected = IntersectRaySide(O, D, cylinder, &t_top);
-    int bottom_intersected = IntersectRayCapsCylinder(O, D, cylinder, &t_bottom);
-    if (!top_intersected && !bottom_intersected)
-        return FALSE;
-    if (!bottom_intersected)
-        *t = t_top;
-    else if (!top_intersected)
-        *t = t_bottom;
-    else
-        *t = fminf(t_top, t_bottom);
-    return TRUE;
+	if (!intersect_ray_pl(param, pl, t))
+		return (FALSE);
+	inter = reveal_intersectionpoint_xyz(param, *t);
+	distance = ft_distance(&inter, &pl->coord);
+	if (distance > cy->diameter / 2.0f)
+		return (FALSE);
+	return (TRUE);
 }
-

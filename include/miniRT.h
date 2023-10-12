@@ -11,26 +11,24 @@
 /* ************************************************************************** */
 
 #ifndef MINIRT_H
-#define MINIRT_H
+# define MINIRT_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
-#include <float.h>
-#include <unistd.h>
-#include "../lib/MLX42/include/MLX42/MLX42.h"
-#include "../lib/libft/libft.h"
-#include "structs.h"
-#include "functions.h"
+# include <stdio.h>
+# include <stdlib.h>
+# include <stdbool.h>
+# include <math.h>
+# include <float.h>
+# include <unistd.h>
+# include "../lib/MLX42/include/MLX42/MLX42.h"
+# include "../lib/libft/libft.h"
+# include "structs.h"
+# include "functions.h"
 
-#define Cw 800
-#define Ch 800
-#define Vw 1
-#define Vh 1
-#define FALSE 0
-#define TRUE 1
-
-
+# define CW 800
+# define CH 800
+# define VW 1
+# define VH 1
+# define FALSE 0
+# define TRUE 1
 
 #endif
