@@ -12,6 +12,23 @@
 
 #include "../../include/miniRT.h"
 
+void* renderThread(void *arg) {
+	ThreadData *data = (ThreadData *)arg;
+	t_rt *rt = data->rt;
+
+	for (int y = data->startRow; y < data->endRow; ++y)
+	{
+		for (int x = 0; x < CW; ++x)
+		{
+			int cy = CH - y - 1;
+			int color = ft_render_fun(&rt, x, cy);
+			mlx_put_pixel(rt->window->img, x, y, color);
+		}
+	}
+
+	return NULL;
+}
+
 int	ft_render_fun(t_rt **rt, int Cx, int Cy)
 {
 	t_xyz			o;
@@ -28,26 +45,24 @@ int	ft_render_fun(t_rt **rt, int Cx, int Cy)
 	return (ft_pixel(color.r, color.g, color.b, 255));
 }
 
-void	render_sc(t_rt **rt)
+void render_sc(t_rt **rt)
 {
-	int	sx;
-	int	sy;
-	int	cx;
-	int	cy;
-	int	fin_color;
+	int numThreads = 4;
+	pthread_t threads[numThreads];
+	ThreadData threadData[numThreads];
 
-	sx = 0;
-	while (sx < CW)
+	int rowsPerThread = CH / numThreads;
+
+	for (int i = 0; i < numThreads; ++i)
 	{
-		sy = 0;
-		while (sy < CH)
-		{
-			cx = sx - CW / 2;
-			cy = CH / 2 - sy;
-			fin_color = ft_render_fun(rt, cx, cy);
-			mlx_put_pixel((*rt)->window->img, sx, sy, fin_color);
-			sy++;
-		}
-		sx++;
+		threadData[i].rt = *rt;
+		threadData[i].startRow = i * rowsPerThread;
+		threadData[i].endRow = (i == numThreads - 1) ? CH : (i + 1) * rowsPerThread;
+		pthread_create(&threads[i], NULL, renderThread, &threadData[i]);
+	}
+
+	for (int i = 0; i < numThreads; ++i)
+	{
+		pthread_join(threads[i], NULL);
 	}
 }

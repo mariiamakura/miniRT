@@ -19,6 +19,7 @@
 # include <math.h>
 # include <float.h>
 # include <unistd.h>
+# include <pthread.h>
 # include "../lib/MLX42/include/MLX42/MLX42.h"
 # include "../lib/libft/libft.h"
 # include "structs.h"
