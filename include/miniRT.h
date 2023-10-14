@@ -31,5 +31,6 @@
 # define VH 1
 # define FALSE 0
 # define TRUE 1
+# define NUM_THREADS 2
 
 #endif

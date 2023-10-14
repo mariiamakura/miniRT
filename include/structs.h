@@ -199,11 +199,12 @@ typedef struct s_ks
 	float	k3;
 }t_ks;
 
-typedef struct {
-	t_rt    *rt;
-	int     startRow;
-	int     endRow;
-}ThreadData;
+typedef struct s_thread_data
+{
+	t_rt	*rt;
+	int		start_row;
+	int		end_row;
+}t_thread_data;
 
 typedef struct s_rays
 {

@@ -37,6 +37,10 @@ clean: libft_clean
 fclean: clean
 	@rm -rf $(NAME)
 
+norm:
+	@norminette include/*.h
+	@norminette $(SRCS)
+
 re: clean all
 
 run: all

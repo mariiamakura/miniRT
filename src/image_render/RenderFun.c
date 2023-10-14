@@ -12,21 +12,61 @@
 
 #include "../../include/miniRT.h"
 
-void* renderThread(void *arg) {
-	ThreadData *data = (ThreadData *)arg;
-	t_rt *rt = data->rt;
+static void	*render_thread(void *arg)
+{
+	t_thread_data	*data;
+	t_rt			*rt;
+	int				x;
+	int				y;
+	int				color;
 
-	for (int y = data->startRow; y < data->endRow; ++y)
+	data = (t_thread_data *)arg;
+	rt = data->rt;
+	y = data->start_row;
+	while (y < data->end_row)
 	{
-		for (int x = 0; x < CW; ++x)
+		x = 0;
+		while (x < CW)
 		{
-			int cy = CH - y - 1;
-			int color = ft_render_fun(&rt, x, cy);
+			color = ft_render_fun(&rt, x, CH - y - 1);
 			mlx_put_pixel(rt->window->img, x, y, color);
+			x++;
 		}
+		y++;
 	}
+	return (NULL);
+}
 
-	return NULL;
+void	create_threads(pthread_t *threads,
+			t_thread_data *thread_data,
+			t_rt **rt, int rows_per_thread)
+{
+	int	i;
+
+	i = 0;
+	while (i < NUM_THREADS)
+	{
+		thread_data[i].rt = *rt;
+		thread_data[i].start_row = i * rows_per_thread;
+		if (i == NUM_THREADS - 1)
+			thread_data[i].end_row = CH;
+		else
+			thread_data[i].end_row = (i + 1) * rows_per_thread;
+		pthread_create(&threads[i], NULL, render_thread, &thread_data[i]);
+		i++;
+	}
+}
+
+static void	join_threads(pthread_t *threads)
+{
+	int	i;
+
+	i = 0;
+	while (i < NUM_THREADS)
+	{
+		pthread_join(threads[i], NULL);
+		i++;
+	}
 }
 
 int	ft_render_fun(t_rt **rt, int Cx, int Cy)
@@ -45,24 +85,13 @@ int	ft_render_fun(t_rt **rt, int Cx, int Cy)
 	return (ft_pixel(color.r, color.g, color.b, 255));
 }
 
-void render_sc(t_rt **rt)
+void	render_sc(t_rt **rt)
 {
-	int numThreads = 4;
-	pthread_t threads[numThreads];
-	ThreadData threadData[numThreads];
+	pthread_t		threads[NUM_THREADS];
+	t_thread_data	thread_data[NUM_THREADS];
+	int				rows_per_thread;
 
-	int rowsPerThread = CH / numThreads;
-
-	for (int i = 0; i < numThreads; ++i)
-	{
-		threadData[i].rt = *rt;
-		threadData[i].startRow = i * rowsPerThread;
-		threadData[i].endRow = (i == numThreads - 1) ? CH : (i + 1) * rowsPerThread;
-		pthread_create(&threads[i], NULL, renderThread, &threadData[i]);
-	}
-
-	for (int i = 0; i < numThreads; ++i)
-	{
-		pthread_join(threads[i], NULL);
-	}
+	rows_per_thread = CH / NUM_THREADS;
+	create_threads(threads, thread_data, rt, rows_per_thread);
+	join_threads(threads);
 }
