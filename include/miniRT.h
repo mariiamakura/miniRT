@@ -25,12 +25,12 @@
 # include "structs.h"
 # include "functions.h"
 
-# define CW 800
-# define CH 800
+# define CW 1000
+# define CH 1000
 # define VW 1
 # define VH 1
 # define FALSE 0
 # define TRUE 1
-# define NUM_THREADS 2
+# define NUM_THREADS 8
 
 #endif
