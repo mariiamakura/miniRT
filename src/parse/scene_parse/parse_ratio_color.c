@@ -120,7 +120,7 @@ int	ft_is_float(char *str)
 			i++;
 		else if ((str[i] == ' ' || str[i] == '\n'))
 			i++;
-		else 
+		else
 			return (FALSE);
 	}
 	return (TRUE);

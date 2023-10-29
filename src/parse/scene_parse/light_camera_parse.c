@@ -29,7 +29,7 @@ int	ft_ambient_light_parse(char *line, t_rt **rt)
 	}
 	ft_bzero(&amb, sizeof(t_ambient));
 	amb.id = "A";
-	if (!ft_parse_ratio(tab[1], &amb.ratio) 
+	if (!ft_parse_ratio(tab[1], &amb.ratio)
 		|| !ft_parse_color(tab[2], &amb.color))
 	{
 		ft_free_2d_arr(tab);
@@ -85,7 +85,7 @@ int	ft_light_parse(char *line, t_rt **rt)
 	}
 	ft_bzero(&light, sizeof(t_light));
 	light.id = "L";
-	if (!ft_parse_coord(tab[1], &light.coord) 
+	if (!ft_parse_coord(tab[1], &light.coord)
 		|| !ft_parse_ratio(tab[2], &light.ratio))
 	{
 		ft_free_2d_arr(tab);

@@ -15,7 +15,7 @@
 int	ft_init_parse_rt(t_rt **rt)
 {
 	*rt = malloc(sizeof(t_rt));
-	if (!*rt) 
+	if (!*rt)
 		return (ft_error("rt struct allocation failed"));
 	(*rt)->sc = malloc(sizeof(t_sc));
 	if (!(*rt)->sc)

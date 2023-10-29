@@ -27,7 +27,7 @@ int	ft_plane_parse(char *line, t_plane *pl)
 		return (FALSE);
 	}
 	plane.id = "pl";
-	if (!ft_parse_coord(tab[1], &plane.coord) 
+	if (!ft_parse_coord(tab[1], &plane.coord)
 		|| !ft_parse_vectors(tab[2], &plane.vector)
 		|| !ft_parse_color(tab[3], &plane.color))
 	{
@@ -35,7 +35,7 @@ int	ft_plane_parse(char *line, t_plane *pl)
 		return (FALSE);
 	}
 	ft_free_2d_arr(tab);
-	*pl = plane; 
+	*pl = plane;
 	return (TRUE);
 }
 

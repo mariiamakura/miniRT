@@ -49,7 +49,7 @@ static int	ft_process_line(char *line, t_rt **rt, int *index)
 		if (!ft_light_parse(line, rt))
 			return (TRUE);
 	}
-	else if (ft_strncmp(line, "pl ", 2) == 0 
+	else if (ft_strncmp(line, "pl ", 2) == 0
 		|| ft_strncmp(line, "sp ", 2) == 0
 		|| ft_strncmp(line, "cy ", 2) == 0)
 	{

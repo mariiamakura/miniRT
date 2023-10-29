@@ -17,7 +17,7 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <math.h>
-# include <float.h>
+//# include <float.h>
 # include <unistd.h>
 # include <pthread.h>
 # include "../lib/MLX42/include/MLX42/MLX42.h"
@@ -31,6 +31,7 @@
 # define VH 1
 # define FALSE 0
 # define TRUE 1
+# define FLT_MAX 3.40282347e+38F
 # define NUM_THREADS 8
 
 #endif

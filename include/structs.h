@@ -88,7 +88,7 @@ typedef struct s_cam
 	t_matrix_3x3	rot;
 }t_cam;
 
-typedef struct s_light 
+typedef struct s_light
 {
 	char	*id;
 	float	ratio;
@@ -103,7 +103,7 @@ enum e_figure
 	CYLINDER
 };
 
-typedef struct s_sphere 
+typedef struct s_sphere
 {
 	char	*id;
 	t_xyz	coord;
@@ -119,7 +119,7 @@ typedef struct s_plane
 	t_color	color;
 }t_plane;
 
-typedef struct s_cylinder 
+typedef struct s_cylinder
 {
 	char	*id;
 	t_xyz	coord;
@@ -162,7 +162,7 @@ typedef struct s_hitPoint
 
 //struct for a sc (image that we render)
 //it should have an ambient and normal light, 1 cam and some objects
-typedef struct s_sc 
+typedef struct s_sc
 {
 	t_ambient	ambient;
 	t_cam		cam;
@@ -171,14 +171,14 @@ typedef struct s_sc
 	t_canva		canva;
 }t_sc;
 
-typedef struct s_window 
+typedef struct s_window
 {
 	mlx_t		*mlx;
 	mlx_image_t	*img;
 }t_window;
 
 //our main struct
-typedef struct s_rt 
+typedef struct s_rt
 {
 	t_sc		*sc;
 	t_window	*window;
