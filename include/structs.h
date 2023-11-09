@@ -154,12 +154,6 @@ typedef struct s_canva
 	float	depth_scale;
 }t_canva;
 
-typedef struct s_hitPoint
-{
-	float	h1;
-	float	h2;
-}t_hitPoint;
-
 //struct for a sc (image that we render)
 //it should have an ambient and normal light, 1 cam and some objects
 typedef struct s_sc
