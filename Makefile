@@ -7,7 +7,19 @@ LIBFT_DIR := lib/libft
 LIBFT	 := $(LIBFT_DIR)/libft.a
 HEADERS	 := -I ./include -I $(LIBMLX)/include
 LIBS	 := $(LIBMLX)/build/libmlx42.a -ldl -lglfw -lpthread -lm
-SRCS	 := $(shell find ./src -iname "*.c")
+SRCS	 := ./src/ft_free.c ./src/image_render/camera.c ./src/image_render/math/2d_rotate.c \
+	./src/image_render/math/mat_math.c ./src/image_render/math/math.c \
+	./src/image_render/math/xy_math.c ./src/image_render/math/xyz_math.c \
+	./src/image_render/math/xyz_plus_min.c ./src/image_render/ClosestIntersection.c \
+	./src/image_render/ComputeLighting.c ./src/image_render/IntersectRay.c \
+	./src/image_render/RenderFun.c ./src/image_render/TraceRay.c ./src/image_render/colors.c \
+	./src/image_render/imag_init.c ./src/image_render/intersectRay2.c \
+	./src/image_render/struct_init_image.c ./src/main.c ./src/parse/check_file_content.c \
+	./src/parse/parse_utils.c ./src/parse/scene_parse/ft_manage_list.c \
+	./src/parse/scene_parse/parse_coord_vec.c ./src/parse/scene_parse/parse_objects_2.c \
+	./src/parse/scene_parse/light_camera_parse.c ./src/parse/scene_parse/parse_objects.c \
+	./src/parse/scene_parse/parse_ratio_color.c ./src/parse/init_parse_struct.c \
+	./src/parse/parse.c
 OBJ_DIR  := obj
 OBJS	 := $(patsubst ./src/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
@@ -22,6 +34,9 @@ $(OBJ_DIR)/%.o: ./src/%.c
 
 $(NAME): $(OBJS)
 	@$(CC) $(OBJS) $(LIBS) $(HEADERS) -o $(NAME) $(LIBFT)
+
+print_src:
+	$(info SRCS: $(SRCS))
 
 libft:
 	@echo "Building libft library"
