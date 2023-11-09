@@ -28,7 +28,7 @@ static void	*render_thread(void *arg)
 		x = 0;
 		while (x < CW)
 		{
-			color = ft_render_fun(&rt, x, CH - y - 1);
+			color = ft_render_fun(&rt, x - (CW / 2), CH - y - (CH / 2));
 			mlx_put_pixel(rt->window->img, x, y, color);
 			x++;
 		}
