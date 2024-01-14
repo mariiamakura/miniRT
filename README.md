@@ -1,4 +1,13 @@
 # miniRT
+A simple RayTracing application.
+![scrinshoot](example.gif)
 
-rt->scene fully initialized and works. can be used to get the data. 
-rt->window is not initialized in parsing part. should be done afterwards. 
+## how to run
+
+```
+make
+```
+valid maps are from map1 to map6
+```
+./so_long maps/map6.ber 
+```
