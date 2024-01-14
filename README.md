@@ -1,5 +1,5 @@
 # miniRT
-A simple RayTracing application in collaboration with [Luiz]([URL](https://github.com/lbaron42))
+A simple RayTracing application in collaboration with [Luiz](https://github.com/lbaron42)
 
 ![scrinshoot](example.gif)
 
