@@ -31,6 +31,6 @@
 # define FALSE 0
 # define TRUE 1
 # define FLT_MAX 3.40282347e+38F
-# define NUM_THREADS 32
+# define NUM_THREADS 100
 
 #endif
