@@ -24,32 +24,19 @@ Camera movement and rotation can be done by using those keys:
 | MLX_KEY_W | z | |
 | MLX_KEY_S | -z | |
 | MLX_KEY_D | x | |
+| MLX_KEY_A | -x | |
+| MLX_KEY_SPACE | y | |
+| MLX_KEY_LEFT_SHIFT | -y | |
+| MLX_KEY_KP_4 | | z |
+| MLX_KEY_KP_6 | | -z |
+| MLX_KEY_KP_8 | | -y |
+| MLX_KEY_KP_2 | | y |
+| MLX_KEY_KP_7 | | x |
+| MLX_KEY_KP_9 | | -x |
 
+Perfomance of the application can be impoved by increasing number of threads in include/miniRT.h file:
 
+```
+# define NUM_THREADS 100
+```
 
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_W))
-		m_dir.z = 1;
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_S))
-		m_dir.z = -1;
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_D))
-		m_dir.x = 1;
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_A))
-		m_dir.x = -1;
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_SPACE))
-		m_dir.y = 1;
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_LEFT_SHIFT))
-		m_dir.y = -1;
-
-
-  	if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_8))
-		add_rot = ft_xy_rot_ox(cosf(rot_val), sinf(rot_val));
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_2))
-		add_rot = ft_xy_rot_ox(cosf(-rot_val), sinf(-rot_val));
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_4))
-		add_rot = ft_xy_rot_oy(cosf(-rot_val), sinf(-rot_val));
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_6))
-		add_rot = ft_xy_rot_oy(cosf(rot_val), sinf(rot_val));
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_7))
-		add_rot = ft_xy_rot_oz(cosf(rot_val), sinf(rot_val));
-	else if (mlx_is_key_down((*rt)->window->mlx, MLX_KEY_KP_9))
-		add_rot = ft_xy_rot_oz(cosf(-rot_val), sinf(-rot_val));
